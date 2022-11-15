@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { IoMdAdd } from 'react-icons/io';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +19,6 @@ import EditPlate from './EditPlate';
 import { getErrorMessage } from '../../utils/getErrorMessage';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { GiCancel } from 'react-icons/gi';
-import { authSelectors } from '../../redux/auth';
 import styles from './Plates.module.css';
 import { translationTimeout } from '../../constants/translationTimeout';
 
@@ -42,8 +40,6 @@ export default function PlatesPage() {
   // eslint-disable-next-line no-unused-vars
   const [pageCount, setPageCount] = useState(9);
   const [searchText, setSearchText] = useState('');
-
-  const { restaurant_id } = useSelector(authSelectors.getUser);
 
   const { t, i18n } = useTranslation();
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { IoMdAdd } from 'react-icons/io';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -11,7 +10,6 @@ import MenuCard from './MenuCard';
 import AddSection from './AddSection';
 import EditSection from './EditSection';
 import { getErrorMessage } from '../../utils/getErrorMessage';
-import { authSelectors } from '../../redux/auth';
 
 const MenuModals = {
   add: 'ADD_SECTION',
@@ -23,8 +21,6 @@ export default function MenuPage() {
   const [sectionsLoading, setSectionsLoading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [editSectionId, setEditSectionId] = useState(null);
-
-  const { restaurant_id } = useSelector(authSelectors.getUser);
 
   const { t, i18n } = useTranslation();
 

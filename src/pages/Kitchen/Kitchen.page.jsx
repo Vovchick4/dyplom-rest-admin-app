@@ -13,7 +13,7 @@ export default function KitchenPage() {
 
   const { t } = useTranslation();
 
-  const onSiteOrders = useSelector(ordersSelectors.getOnSiteOrders);
+  // const onSiteOrders = useSelector(ordersSelectors.getOnSiteOrders);
   const takeawayOrders = useSelector(ordersSelectors.getTakeawayOrders);
 
   function editOrder(orderId, data) {

@@ -1,0 +1,82 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.closeBtn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--main-color);
+}
+
+.formBox {
+  padding-top: 45px;
+  padding-bottom: 45px;
+  width: 350px;
+}
+
+.imgInputBox {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 102;
+}
+
+.imgPreviewBox {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 450px;
+}
+
+.imgPreview {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.footerContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.footerLink {
+  margin-top: 15px;
+  color: var(--nopaid-text-color);
+  text-decoration: underline var(--nopaid-text-color);
+  cursor: pointer;
+}
+
+.submitText {
+  text-transform: uppercase;
+}
+
+@media (max-width: 930px) {
+  .formBox {
+    width: 100%;
+  }
+
+  .imgPreviewBox {
+    position: relative;
+    left: 0;
+    margin-bottom: 20px;
+  }
+
+  .imgPreview {
+    max-height: 360px;
+    object-position: center;
+    border-radius: 10px;
+  }
+}

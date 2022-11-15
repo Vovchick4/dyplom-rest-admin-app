@@ -1,0 +1,54 @@
+.container {
+  max-height: 100%;
+  height: 700px;
+}
+
+.formBox {
+  padding-top: 45px;
+  padding-bottom: 45px;
+  width: 350px;
+}
+
+.imgInputBox {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 102;
+}
+
+.imgPreviewBox {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 450px;
+}
+
+.imgPreview {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+}
+
+.submitText {
+  text-transform: uppercase;
+}
+
+@media (max-width: 930px) {
+  .formBox {
+    width: 100%;
+  }
+
+  .imgPreviewBox {
+    position: relative;
+    left: 0;
+    margin-bottom: 20px;
+  }
+
+  .imgPreview {
+    max-height: 40vh;
+    border-radius: 10px;
+  }
+}

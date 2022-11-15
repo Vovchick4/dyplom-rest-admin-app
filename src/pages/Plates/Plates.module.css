@@ -1,0 +1,96 @@
+.grid_content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 35px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 25px;
+}
+
+.loader {
+  padding: 34px 0;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+}
+
+.inputBox {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 5px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0;
+  color: var(--text-grey-color);
+  width: 30px;
+  height: 30px;
+}
+
+.cancelIcon {
+  color: var(--text-grey-color);
+  width: 25px;
+  height: 25px;
+}
+
+.input {
+  border: none;
+  border-bottom: 2px solid var(--main-color);
+  font-size: 18px;
+  color: var(--text-dark-color);
+  background-color: transparent;
+  padding: 10px;
+  padding-left: 40px;
+  width: 300px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.clearButton {
+  position: absolute;
+  right: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--white-color);
+}
+
+@media (max-width: 1366px) {
+  .grid_content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 990px) {
+  .grid_content {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .content {
+    display: block;
+  }
+
+  .input {
+    width: 100%;
+  }
+}

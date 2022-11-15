@@ -1,0 +1,1 @@
+export { useGoogleTranslate } from './useGoogleTranslate';

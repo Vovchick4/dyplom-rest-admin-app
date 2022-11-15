@@ -1,0 +1,41 @@
+.selectContent {
+  position: relative;
+  width: 100%;
+  font-size: 18px;
+  color: var(--text-grey-color);
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: var(--white-color);
+  cursor: pointer;
+}
+
+.iconLeft {
+  color: var(--main-color);
+  transform: rotate(-90deg);
+}
+
+.iconRight {
+  color: var(--main-color);
+  transform: rotate(90deg);
+}
+
+.selectItems {
+  position: absolute;
+  padding: 15px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-color: var(--white-color);
+  width: 100%;
+  cursor: pointer;
+  z-index: 38;
+}
+
+.selectItem:not(:last-child) {
+  margin-bottom: 8px;
+}

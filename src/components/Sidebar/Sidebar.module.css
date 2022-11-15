@@ -1,0 +1,120 @@
+.container {
+  width: 210px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: var(--white-color);
+  padding: 30px 0;
+}
+
+.dimmer {
+  display: none;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.logoLink {
+  display: block;
+  margin-bottom: 95px;
+  padding-left: 40px;
+  padding-right: 40px;
+
+  color: var(--main-color);
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.logoImg {
+  display: block;
+  max-width: 100%;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-grey-color);
+  margin-bottom: 15px;
+  display: none;
+  justify-content: center;
+}
+
+.link {
+  color: var(--text-grey-color);
+  padding: 20px 40px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background-color 50ms linear, color 50ms linear;
+  position: relative;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.linkActive::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: var(--main-color);
+}
+
+.linkActive {
+  composes: link;
+}
+
+.linkActive,
+.link:hover {
+  color: var(--text-color);
+  background-color: var(--main-lighter-color);
+}
+
+.linkIcon {
+  font-size: 24px;
+  margin-right: 20px;
+}
+
+.linkLabel {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 930px) {
+  .container {
+    transform: translateX(-100%);
+    transition: transform 75ms linear;
+    z-index: 99;
+  }
+
+  .container.active {
+    transform: translateX(0);
+  }
+
+  .dimmer.active {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 98;
+  }
+}
+
+@media (max-width: 450px) {
+  .headerTitle {
+    display: flex;
+  }
+}

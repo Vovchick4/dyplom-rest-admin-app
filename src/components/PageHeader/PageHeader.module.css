@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 37px;
+  margin-bottom: 37px;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+@media (max-width: 420px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .button {
+    margin-top: 15px;
+  }
+}

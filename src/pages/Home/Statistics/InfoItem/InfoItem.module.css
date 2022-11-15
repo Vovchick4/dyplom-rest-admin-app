@@ -1,0 +1,88 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.status {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 18px;
+}
+
+.statusExcellent {
+  composes: status;
+  background-color: #77c75a;
+}
+
+.statusGood {
+  composes: status;
+  background-color: #fdce35;
+}
+
+.statusSatisfactory {
+  composes: status;
+  background-color: #6979e2;
+}
+
+.statusPoor {
+  composes: status;
+  background-color: #05ccd6;
+}
+
+.statusBad {
+  composes: status;
+  background-color: #ff664f;
+}
+
+.labelBox {
+  margin-right: 15px;
+  width: 120px;
+}
+
+.name {
+  font-size: 16px;
+  color: var(--text-grey-color);
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 10px;
+  color: #fdce35;
+}
+
+.percentage {
+  margin-right: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  width: 58px;
+}
+
+.percentageAlt {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.percentageAltUp {
+  composes: percentageAlt;
+  color: #77c75a;
+}
+
+.percentageAltDown {
+  composes: percentageAlt;
+  color: #ff664f;
+}
+
+.percentageAltIcon {
+  font-size: 24px;
+}
+
+.percentageAltLabel {
+  margin-left: -3px;
+}

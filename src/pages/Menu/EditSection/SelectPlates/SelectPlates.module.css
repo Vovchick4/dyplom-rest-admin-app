@@ -1,0 +1,49 @@
+.platesContainer {
+  padding: 40px 50px;
+}
+
+.loader {
+  padding: 34px 0;
+}
+
+.platesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 50px;
+  row-gap: 30px;
+}
+
+.plateItemLabel {
+  display: flex;
+  align-items: center;
+}
+
+.plateItemIcon {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.plateItemText {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.platesApplyBox {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.submitText {
+  text-transform: uppercase;
+}
+
+@media (max-width: 930px) {
+  .platesGrid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

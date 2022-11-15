@@ -1,0 +1,9 @@
+.user {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  color: var(--text-grey-color);
+  display: flex;
+  align-items: center;
+}

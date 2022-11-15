@@ -1,0 +1,44 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white-color);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-radius: 1rem;
+  position: relative;
+}
+
+.card_img {
+  object-fit: cover;
+  height: 160px;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  width: 100%;
+}
+
+.card_text {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 30px 50px;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdown {
+  position: absolute;
+  right: 12px;
+  top: 20px;
+}
+
+.dropdownToggler {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  padding: 0;
+  margin: 0;
+}

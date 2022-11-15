@@ -1,0 +1,71 @@
+.container {
+  width: 100%;
+}
+
+.inputField {
+  position: relative;
+}
+
+.inputElem {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.label {
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--input-border-color);
+  border-radius: 5px;
+  font-size: 14px;
+  padding: 14px 20px;
+  transition: border-color 50ms linear;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'Poppins';
+}
+
+.label::placeholder,
+.label::-moz-placeholder,
+.label::-webkit-input-placeholder {
+  font-family: 'Poppins';
+}
+
+.placeholder {
+  color: var(--text-grey-color);
+  font-family: 'Poppins';
+}
+
+.value {
+  color: var(--text-color);
+}
+
+.label:focus + .label {
+  outline: none;
+  border: 1px solid var(--main-color);
+}
+
+.labelError {
+  composes: label;
+}
+
+.inputError,
+.inputError:focus {
+  border-color: palevioletred;
+}
+
+.error {
+  color: palevioletred;
+  display: block;
+  font-size: 16px;
+}
+
+.icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--main-color);
+}

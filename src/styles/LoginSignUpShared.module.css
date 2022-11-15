@@ -1,0 +1,100 @@
+.container {
+  position: relative;
+}
+
+.background {
+  background-image: url('https://images.unsplash.com/photo-1547592180-85f173990554?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+  background-size: cover;
+  background-position: center left;
+  background-repeat: no-repeat;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.bgOverlay {
+  background-color: rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 450px;
+  z-index: 3;
+  background-color: var(--white-color);
+  padding-left: 70px;
+  padding-right: 70px;
+  padding-top: 120px;
+  padding-bottom: 50px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logoBox {
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  max-height: 70px;
+  max-width: 100%;
+}
+
+.header {
+  margin-bottom: 30px;
+}
+
+.headerTitle {
+  font-weight: 700;
+  font-size: 30px;
+  margin-right: 30px;
+  display: inline;
+  vertical-align: baseline;
+}
+
+.headerLink {
+  color: var(--main-color);
+  text-decoration-color: var(--main-color);
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 2px;
+  vertical-align: baseline;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .content {
+    left: 0;
+    width: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 50px;
+    padding-bottom: 30px;
+  }
+
+  .logo {
+    margin-bottom: 70px;
+  }
+}
+
+@media (max-height: 960px) {
+  .content {
+    padding-top: 70px;
+  }
+
+  .logo {
+    margin-bottom: 50px;
+  }
+}

@@ -1,0 +1,17 @@
+:root {
+  --main-color: #589442;
+  --main-lighter-color: #eef4ec;
+  --input-bg-color: #f4f5f6;
+  --input-border-color: #d1dfe2;
+  --bg-color: #000000;
+  --bg-light-color: #f9f8f7;
+  --text-color: #000000;
+  --text-grey-color: #979797;
+  --white-color: #ffffff;
+  --hr-color: #e8e7e6;
+  --navbar-border-color: #e8e8e8;
+  --nopaid-text-color: #ff3d3d;
+  --willpaid-text-color: #ffaa00;
+  --border-color: #e1e0df;
+  --calendar-range-color: rgba(97, 151, 68, 0.35);
+}

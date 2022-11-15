@@ -1,0 +1,49 @@
+.card {
+  background-color: transparent;
+  padding: 50px 40px 40px 120px;
+  border: 2px solid var(--input-border-color);
+  border-radius: 10px;
+  position: relative;
+  margin: 0 0 0 30px;
+}
+
+.quote_image {
+  position: absolute;
+  left: -30px;
+  font-size: 110px;
+  color: var(--willpaid-text-color);
+}
+
+.text {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-grey-color);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.user_name {
+  font-size: 14px;
+  color: var(--text-color);
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.user_icon {
+  font-size: 30px;
+}
+
+.date {
+  font-size: 14px;
+  color: var(--text-grey-color);
+}

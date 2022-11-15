@@ -1,0 +1,21 @@
+.notification {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  color: var(--text-grey-color);
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.circle {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.1rem;
+  font-size: 12px;
+  background-color: var(--main-color);
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.4rem;
+}

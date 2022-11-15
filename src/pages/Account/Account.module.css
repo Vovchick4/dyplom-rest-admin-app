@@ -1,0 +1,71 @@
+.grid_content {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  gap: 40px;
+}
+
+.card {
+  background-color: var(--white-color);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.contentCard {
+  composes: card;
+  max-height: 483px;
+  color: var(--text-grey-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 25px 15px;
+}
+
+.contentTitle {
+  margin-bottom: 42px;
+  padding: 0px 30px;
+}
+
+.invoices_content {
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 0 30px;
+}
+
+.calendarCard {
+  composes: card;
+}
+
+.calendarContainer {
+  width: 290px;
+}
+
+.calendarTitle {
+  margin-bottom: 32px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+@media (max-width: 1200px) {
+  .grid_content {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .contentCard {
+    composes: card;
+    order: 2;
+  }
+
+  .calendarCard {
+    composes: card;
+    order: 1;
+  }
+}
+
+@media (max-width: 450px) {
+  .card {
+    padding: 30px 20px;
+  }
+
+  .calendarContainer {
+    width: 238px;
+  }
+}

@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart {
+  width: 260px;
+  position: relative;
+}
+
+.chart::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  border-radius: 50%;
+  border: 10px solid rgba(255, 255, 255, 0.5);
+}
+
+.chartLabelBox {
+  position: absolute;
+  top: 51%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95px;
+  height: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.chartTitle {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.chartDescription {
+  font-size: 14px;
+  color: var(--text-grey-color);
+}
+
+.info {
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+@media (max-width: 650px) {
+  .container {
+    justify-content: center;
+  }
+  .info {
+    margin-top: 20px;
+    margin-left: 0;
+  }
+}

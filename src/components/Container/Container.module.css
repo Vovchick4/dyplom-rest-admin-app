@@ -1,0 +1,11 @@
+.main_container {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+@media (max-width: 930px) {
+  .main_container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

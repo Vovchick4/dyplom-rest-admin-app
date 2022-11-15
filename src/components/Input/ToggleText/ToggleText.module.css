@@ -1,0 +1,59 @@
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 26px;
+}
+
+.handle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--input-bg-color);
+  transition: 0.4s;
+  border-radius: 18px;
+}
+
+.handle:after {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--nopaid-text-color);
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.input:focus-visible + .handle {
+  outline: #000 auto 1px;
+}
+
+.input:disabled + .handle {
+  opacity: 0.7;
+}
+
+.input:checked + .handle:after {
+  transform: translateX(34px);
+  background-color: var(--main-color);
+}
+
+.handle:before {
+  content: 'Off';
+  font-size: 14px;
+  display: inline;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: right 0.4s;
+}
+
+.input:checked + .handle:before {
+  content: 'On';
+  right: 34px;
+}

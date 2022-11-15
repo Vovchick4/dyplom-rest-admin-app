@@ -1,0 +1,64 @@
+.card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--white-color);
+  padding: 16px 20px;
+  position: relative;
+}
+
+.card_grey_mode {
+  composes: card;
+  background-color: var(--bg-light-color);
+}
+
+.date {
+  font-size: 14px;
+  color: var(--text-grey-color);
+  width: 183px;
+  font-weight: 400;
+}
+
+.time {
+  margin-left: 10px;
+}
+
+.invoice_number {
+  composes: date;
+  color: var(--text-color);
+  font-weight: 700;
+  margin-left: 5%;
+}
+
+.download {
+  color: var(--main-color);
+  font-size: 28px;
+  position: absolute;
+  right: 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+@media (max-width: 636px) {
+  .invoice_number {
+    margin-left: 40px;
+  }
+  .date {
+    width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .invoice_number {
+    margin-left: 0px;
+    margin-top: 4px;
+  }
+}

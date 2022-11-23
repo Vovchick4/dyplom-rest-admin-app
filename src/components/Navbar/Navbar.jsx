@@ -1,3 +1,4 @@
+import Popup from 'reactjs-popup';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import { Container } from '../';
 import Notifications from './Notifications';
 import Settings from './Settings';
 import User from './User';
-import { Dropdown } from '../';
+import { NotFoundItems, Dropdown } from '../';
 import { ordersSelectors } from '../../redux/orders';
 import { authSelectors } from '../../redux/auth';
 import { hotelSelectors } from '../../redux/hotel';
@@ -113,7 +114,19 @@ export default function Navbar({ onOpenSidebar }) {
                 />
               </div>
 
-              <Notifications count={newOrdersCount} />
+              <Popup
+                trigger={
+                  <button style={{ background: 'none', border: 0 }}>
+                    <Notifications count={newOrdersCount} />
+                  </button>
+                }
+                position="bottom center"
+              >
+                {newOrdersCount === 0 && (
+                  <NotFoundItems title={"Haven't order(s)"} size="small" />
+                )}
+                {newOrdersCount !== 0 && <NotFoundItems size="medium" />}
+              </Popup>
               <Settings />
               <User />
             </div>

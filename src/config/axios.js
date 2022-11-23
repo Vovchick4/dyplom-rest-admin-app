@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const ApiUrl = 'https://apihotel.ouiorder.fr/api/admin';
+export const ApiUrl = 'http://dyplom-app-back/api/admin';
 
 axios.defaults.baseURL = ApiUrl;
 

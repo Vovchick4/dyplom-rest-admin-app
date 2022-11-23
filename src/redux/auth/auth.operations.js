@@ -95,7 +95,6 @@ export const getUser = () => (dispatch, getState) => {
     .catch((error) => {
       unsetToken();
       const message = getErrorMessage(error);
-
       toast.error(message);
       dispatch(actions.getUserError(message));
     });

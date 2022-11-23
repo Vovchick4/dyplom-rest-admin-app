@@ -10,6 +10,7 @@ import 'normalize.css';
 import './styles/variables.css';
 import './styles/index.css';
 import './styles/toast.css';
+import 'reactjs-popup/dist/index.css';
 import './config/axios';
 import './config/i18n';
 

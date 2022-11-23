@@ -1,6 +1,4 @@
 .notification {
-  background: none;
-  border: none;
   cursor: pointer;
   font-size: 28px;
   color: var(--text-grey-color);
@@ -17,5 +15,5 @@
   background-color: var(--main-color);
   color: white;
   border-radius: 50%;
-  padding: 0.2rem 0.4rem;
+  padding: 0.2rem 0.34rem;
 }

@@ -5,7 +5,14 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 
 import styles from './Menu.module.css';
-import { Layout, PageHeader, Button, Modal, Loader } from '../../components';
+import {
+  Layout,
+  PageHeader,
+  Button,
+  Modal,
+  Loader,
+  NotFoundItems,
+} from '../../components';
 import MenuCard from './MenuCard';
 import AddSection from './AddSection';
 import EditSection from './EditSection';
@@ -170,6 +177,10 @@ export default function MenuPage() {
             />
           ))}
         </div>
+      )}
+
+      {sections.length === 0 && !sectionsLoading && (
+        <NotFoundItems title="Haven't menus" />
       )}
     </Layout>
   );

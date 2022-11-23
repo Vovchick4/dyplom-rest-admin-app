@@ -16,3 +16,4 @@ export { default as Dropdown } from './Dropdown';
 export { default as Accordion } from './Accordion';
 export { default as Loader } from './Loader';
 export { default as LanguageTabs } from './LanguageTabs';
+export { default as NotFoundItems } from './NotFoundItems';

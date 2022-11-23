@@ -8,6 +8,9 @@
 }
 
 .content_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   color: var(--text-grey-color);
   font-weight: 700;
   text-transform: uppercase;

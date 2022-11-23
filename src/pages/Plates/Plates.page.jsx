@@ -12,6 +12,7 @@ import {
   Modal,
   Pagination,
   Loader,
+  NotFoundItems,
 } from '../../components';
 import PlateCard from './PlateCard';
 import AddPlate from './AddPlate';
@@ -244,7 +245,7 @@ export default function PlatesPage() {
         </div>
       )}
 
-      {plates && (
+      {plates && plates.length > 9 && (
         <div className={styles.pagination}>
           <Pagination
             currentPage={currentPage}
@@ -252,6 +253,10 @@ export default function PlatesPage() {
             onPageChange={changePage}
           />
         </div>
+      )}
+
+      {plates.length === 0 && !platesLoading && (
+        <NotFoundItems title="Haven't plates" />
       )}
     </Layout>
   );

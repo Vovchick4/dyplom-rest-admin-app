@@ -8,6 +8,9 @@
 }
 
 .content_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   color: var(--text-grey-color);
   font-weight: 700;
   text-transform: uppercase;
@@ -18,7 +21,7 @@
 .content_card {
   max-height: 280px;
   overflow-y: scroll;
-  padding: 0 20px;
+  padding: 0 10px;
 }
 
 .card {

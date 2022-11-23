@@ -28,6 +28,7 @@
     "react-scripts": "4.0.3",
     "react-toastify": "^7.0.4",
     "react-transition-group": "^4.4.2",
+    "reactjs-popup": "^2.0.5",
     "redux-persist": "^6.0.0",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.2",

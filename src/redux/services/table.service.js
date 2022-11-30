@@ -4,15 +4,16 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 import { fetchBaseUrl } from "./helpers"
 import { getErrorMessage } from "../../utils/getErrorMessage"
 
-const tableApi = createApi({
+export const tableApi = createApi({
     reducerPath: "tableApi",
     baseQuery: fetchBaseUrl,
-    tagTypes: ["TableService"],
+    tagTypes: ["Table"],
     endpoints: (builder) => ({
         getTables: builder.query({
             query: () => ({
                 url: "tables",
             }),
+            providesTags: ["Table"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

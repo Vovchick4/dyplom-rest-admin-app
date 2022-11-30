@@ -1,27 +1,27 @@
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 
 import styles from './Kitchen.module.css';
 import { Layout, PageHeader, Loader } from '../../components';
 import KitchenCard from './KitchenCard';
-import { ordersOperations, ordersSelectors } from '../../redux/orders';
+import {
+  useGetOrdersQuery,
+  useEditOrderMutation,
+  useRemoveOrderMutation,
+} from '../../redux/services/order.service';
 
 export default function KitchenPage() {
-  const ordersLoading = useSelector(ordersSelectors.getLoading);
-
-  const dispatch = useDispatch();
+  const { data, isLoading: ordersLoading } = useGetOrdersQuery();
+  const [editOrderMutation] = useEditOrderMutation();
+  const [removeOrderMutation] = useRemoveOrderMutation();
 
   const { t } = useTranslation();
 
-  // const onSiteOrders = useSelector(ordersSelectors.getOnSiteOrders);
-  const takeawayOrders = useSelector(ordersSelectors.getTakeawayOrders);
-
   function editOrder(orderId, data) {
-    dispatch(ordersOperations.edit(orderId, data));
+    editOrderMutation(orderId, data);
   }
 
   function deleteOrder(orderId) {
-    dispatch(ordersOperations.remove(orderId));
+    removeOrderMutation(orderId);
   }
 
   return (
@@ -52,11 +52,11 @@ export default function KitchenPage() {
               </div>
             )}
           </div> */}
-          {takeawayOrders.length > 0 ? (
+          {data.length > 0 ? (
             <div>
               <p className={styles.title}>{t('TAKE AWAY')}</p>
               <div className={styles.card}>
-                {takeawayOrders.map((order) => (
+                {data.map((order) => (
                   <KitchenCard
                     key={order.id}
                     {...order}

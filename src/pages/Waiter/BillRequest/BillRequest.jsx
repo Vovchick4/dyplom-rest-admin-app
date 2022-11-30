@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Loader } from '../../../components';
 import { BiTime } from 'react-icons/bi';
 import styles from './BillRequest.module.css';
@@ -14,36 +13,6 @@ export default function BillRequest({ data, isLoading }) {
         {!isLoading && data.bill_request.length > 0 && (
           <div className={styles.content_card}>
             {data.bill_request.map(({ id, table_number, created_at }) => (
-=======
-import { useState, useEffect } from 'react';
-import { Loader } from '../../../components';
-import { BiTime } from 'react-icons/bi';
-import styles from './BillRequest.module.css';
-
-export default function BillRequest({ opsCategory, data, loading }) {
-  const [filteredData, setFilteredData] = useState(data);
-
-  useEffect(() => {
-    setFilteredData(
-      data.length > 0
-        ? data.filter(({ category }) => category === opsCategory)
-        : []
-    );
-
-    return () => setFilteredData([]);
-  }, [opsCategory, data]);
-
-  return (
-    <div className={styles.content}>
-      <div className={styles.content_title}>
-        Bill Request {loading && <Loader size={3.4} />}
-      </div>
-
-      <div className={styles.content_card}>
-        {!loading && filteredData.length > 0 && (
-          <div className={styles.content_card}>
-            {filteredData.map(({ id, table_number, created_at }) => (
->>>>>>> d498f2eb7c60be25d5d24ab0e90b20e5e8b2468b
               <div
                 key={id}
                 className={id % 2 === 1 ? styles.card : styles.card_grey_mode}

@@ -9,9 +9,9 @@ import routes from '../../config/routes';
 import urls from '../../config/urls';
 import { PrivateRoute, PublicRoute, Loader } from '../';
 import { authOperations, authSelectors } from '../../redux/auth';
-import { ordersActions, ordersOperations } from '../../redux/orders';
 import { hotelOperations, hotelSelectors } from '../../redux/hotel';
 import { echo } from '../../config/echo';
+import { orderApi } from '../../redux/services/order.service';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -23,10 +23,6 @@ export default function App() {
   useEffect(() => {
     dispatch(authOperations.getUser());
   }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(ordersOperations.fetchAll());
-  }, [dispatch, i18n.language, user, hotel]);
 
   useEffect(() => {
     if (!user || user.role !== 'super-admin') {
@@ -45,7 +41,7 @@ export default function App() {
 
   // Set initial settings state
   useEffect(() => {
-    if (!hotel) return;
+    if (!hotel || !user || user.role !== 'super-admin') return;
 
     const hasSettings = hotel.settings !== null;
     if (!hasSettings) {
@@ -122,7 +118,9 @@ export default function App() {
 
     echo.channel(`restaurants.${hotelId}`).listen('OrderCreated', (e) => {
       toast('New order arrived');
-      dispatch(ordersActions.add(e.order));
+      dispatch(
+        orderApi.endpoints.getOrders.initiate(null, { forceRefetch: true })
+      );
     });
 
     return () => {

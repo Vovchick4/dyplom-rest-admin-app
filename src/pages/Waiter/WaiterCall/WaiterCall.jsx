@@ -6,7 +6,9 @@ export default function WaiterCall({ data, isLoading }) {
   return (
     <div className={styles.content}>
       <div className={styles.content_title}>
-        Waiter Call {isLoading && <Loader size={3.4} />}
+        Waiter Call
+        {data.waiter.length === 0 && <span>Doesn't have Waiter Call</span>}
+        {isLoading && <Loader size={3.4} />}
       </div>
 
       {!isLoading && data.waiter.length > 0 && (

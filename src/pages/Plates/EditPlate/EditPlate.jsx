@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
 import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
 import { useFormik } from 'formik';
@@ -16,7 +17,7 @@ import styles from '../AddPlate/AddPlate.module.css';
 import placeholderImage from '../../../images/placeholder.jpg';
 import { useGoogleTranslate } from '../../../hooks';
 import { translationTimeout } from '../../../constants/translationTimeout';
-import { useGetPlateByIdMutation } from '../../../redux/services/plate.service';
+import { useGetPlateByIdQuery } from '../../../redux/services/plate.service';
 
 const validationSchema = Yup.object().shape({
   'name:en': Yup.string()
@@ -39,7 +40,9 @@ const validationSchema = Yup.object().shape({
 const reader = new FileReader();
 
 export default function EditPlate({ plateId, loading, onSubmit, onCancel }) {
-  const [getPlateById, { isLoading }] = useGetPlateByIdMutation();
+  const { data, isLoading } = useGetPlateByIdQuery(plateId);
+  const [plate, setPlate] = useState({});
+  const [checkIsDataEquels, setCheckIsDataEquels] = useState(true);
 
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(placeholderImage);
@@ -87,25 +90,41 @@ export default function EditPlate({ plateId, loading, onSubmit, onCancel }) {
     useGoogleTranslate(formik);
 
   useEffect(() => {
-    getPlateById(plateId)
-      .unwrap()
-      .then((res) => {
-        const plateData = res.data;
-        setImagePreview(plateData.image);
+    if (!data) return;
+    const plateData = data;
+    setPlate(plateData);
+    setImagePreview(plateData.image);
 
-        formik.setValues({
-          'name:en': plateData['name:en'],
-          'name:fr': plateData['name:fr'],
-          price: plateData.price,
-          'description:en': plateData['description:en'],
-          'description:fr': plateData['description:fr'],
-        });
-      })
-      .catch((err) => err);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    formik.setValues({
+      'name:en': plateData['name:en'],
+      'name:fr': plateData['name:fr'],
+      price: plateData.price,
+      'description:en': plateData['description:en'],
+      'description:fr': plateData['description:fr'],
+    });
+    return () => {
+      setPlate({});
+      formik.setValues('');
+      setImagePreview(placeholderImage);
+    };
+  }, [data]);
 
-  console.log(loading);
+  useEffect(() => {
+    if (!plate) return;
+    const data = [];
+    Object.keys(formik.values).forEach((key) => {
+      data.push(plate[key] === formik.values[key]);
+    });
+    data.push(plate.image === imagePreview);
+    if (data.every((dt) => dt === true)) {
+      setCheckIsDataEquels(true);
+    } else {
+      setCheckIsDataEquels(false);
+    }
+    return () => {
+      setCheckIsDataEquels(true);
+    };
+  }, [plate, formik.values, imagePreview]);
 
   return (
     <div className={styles.container}>
@@ -212,7 +231,7 @@ export default function EditPlate({ plateId, loading, onSubmit, onCancel }) {
             <Button
               type="submit"
               fullWidth
-              disabled={isLoading || loading}
+              disabled={isLoading || loading || checkIsDataEquels}
               loading={isLoading || loading}
             >
               <span className={styles.submitText}>{t('Save')}</span>

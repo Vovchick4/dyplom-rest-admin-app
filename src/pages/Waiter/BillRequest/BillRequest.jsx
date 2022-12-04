@@ -6,7 +6,11 @@ export default function BillRequest({ data, isLoading }) {
   return (
     <div className={styles.content}>
       <div className={styles.content_title}>
-        Bill Request {isLoading && <Loader size={3.4} />}
+        Bill Request
+        {data.bill_request.length === 0 && (
+          <span>Doesn't have Bill Request</span>
+        )}
+        {isLoading && <Loader size={3.4} />}
       </div>
 
       <div className={styles.content_card}>

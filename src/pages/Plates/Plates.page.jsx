@@ -61,7 +61,6 @@ export default function PlatesPage() {
   }
 
   function closeModal() {
-    setEditPlateId(null);
     setActiveModal(null);
   }
 

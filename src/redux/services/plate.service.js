@@ -28,18 +28,19 @@ export const platetApi = createApi({
                 }
             }
         }),
-        getPlateById: builder.mutation({
+        getPlateById: builder.query({
             query: (plateId) => ({
                 url: `plates/${plateId}`,
             }),
-            invalidatesTags: ["Plate"],
+            providesTags: ["Plate"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
                 } catch ({ error }) {
                     toast.error(getErrorMessage(error.data))
                 }
-            }
+            },
+            transformResponse: (res) => res.data
         }),
         createPlate: builder.mutation({
             query: (data) => ({
@@ -89,7 +90,7 @@ export const platetApi = createApi({
 })
 
 // Exports Hooks
-export const { useGetPlatesQuery, useGetPlateByIdMutation, useCreatePlateMutation,
+export const { useGetPlatesQuery, useGetPlateByIdQuery, useCreatePlateMutation,
     useEditPlateMutation, useRemovePlateMutation } = platetApi
 
 // Export reducer

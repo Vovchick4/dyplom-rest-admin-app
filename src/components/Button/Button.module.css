@@ -15,6 +15,7 @@
 
 .button:disabled {
   cursor: default;
+  background-color: var(--navbar-border-color);
 }
 
 .default {

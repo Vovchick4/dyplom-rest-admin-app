@@ -43,7 +43,7 @@ export const platetApi = createApi({
         }),
         createPlate: builder.mutation({
             query: (data) => ({
-                method: "POST",
+                method: 'POST',
                 url: "plates",
                 body: data
             }),

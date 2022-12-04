@@ -14,10 +14,11 @@ import { ordersReducer } from './orders';
 import { hotelReducer } from './hotel';
 
 // TableServices
-import { tableService, orderService, restaurantService } from './services';
+import { tableService, orderService, restaurantService, plateService } from './services';
 const { tableServiceReducePath, tableServiceReducer, tableServiceMiddleware } = tableService
 const { orderServiceReducePath, orderServiceReducer, orderServiceMiddleware } = orderService
 const { restaurantServiceReducePath, restaurantServiceReducer, restaurantServiceMiddleware } = restaurantService
+const { plateServiceReducePath, plateServiceReducer, plateServiceMiddleware } = plateService
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   [tableServiceReducePath]: tableServiceReducer,
   [orderServiceReducePath]: orderServiceReducer,
   [restaurantServiceReducePath]: restaurantServiceReducer,
+  [plateServiceReducePath]: plateServiceReducer,
 });
 
 export const store = configureStore({
@@ -35,7 +37,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(tableServiceMiddleware, orderServiceMiddleware, restaurantServiceMiddleware),
+    }).concat(tableServiceMiddleware, orderServiceMiddleware, restaurantServiceMiddleware, plateServiceMiddleware),
 });
 
 export const persistor = persistStore(store);

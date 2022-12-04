@@ -1,5 +1,6 @@
 export function getErrorMessage(error) {
-  if (!error.response) {
+  if (error === undefined) return;
+  if (!error?.response) {
     return error.message;
   }
 

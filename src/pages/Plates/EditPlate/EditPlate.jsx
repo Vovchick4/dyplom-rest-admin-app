@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { DebounceInput } from 'react-debounce-input';
 
@@ -16,9 +14,9 @@ import {
 } from '../../../components';
 import styles from '../AddPlate/AddPlate.module.css';
 import placeholderImage from '../../../images/placeholder.jpg';
-import { getErrorMessage } from '../../../utils/getErrorMessage';
 import { useGoogleTranslate } from '../../../hooks';
 import { translationTimeout } from '../../../constants/translationTimeout';
+import { useGetPlateByIdMutation } from '../../../redux/services/plate.service';
 
 const validationSchema = Yup.object().shape({
   'name:en': Yup.string()
@@ -40,13 +38,9 @@ const validationSchema = Yup.object().shape({
 
 const reader = new FileReader();
 
-export default function EditPlate({
-  plateId,
-  loading,
-  setLoading,
-  onSubmit,
-  onCancel,
-}) {
+export default function EditPlate({ plateId, loading, onSubmit, onCancel }) {
+  const [getPlateById, { isLoading }] = useGetPlateByIdMutation();
+
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(placeholderImage);
 
@@ -93,14 +87,10 @@ export default function EditPlate({
     useGoogleTranslate(formik);
 
   useEffect(() => {
-    setLoading(true);
-
-    axios({
-      url: `/plates/${plateId}`,
-      method: 'GET',
-    })
+    getPlateById(plateId)
+      .unwrap()
       .then((res) => {
-        const plateData = res.data.data;
+        const plateData = res.data;
         setImagePreview(plateData.image);
 
         formik.setValues({
@@ -111,10 +101,11 @@ export default function EditPlate({
           'description:fr': plateData['description:fr'],
         });
       })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setLoading(false));
+      .catch((err) => err);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log(loading);
 
   return (
     <div className={styles.container}>
@@ -141,7 +132,7 @@ export default function EditPlate({
                 type="text"
                 debounceTimeout={translationTimeout}
                 required
-                disabled={loading}
+                disabled={isLoading || loading}
                 autoComplete="on"
                 placeholder={t('Name of the plate')}
                 name={`name:${dataLanguage}`}
@@ -166,7 +157,7 @@ export default function EditPlate({
                 min="0"
                 step=".01"
                 required
-                disabled={loading}
+                disabled={isLoading}
                 placeholder={t('Price')}
                 name="price"
                 value={formik.values.price}
@@ -180,7 +171,7 @@ export default function EditPlate({
                 element={Input}
                 debounceTimeout={translationTimeout}
                 type="text"
-                disabled={loading}
+                disabled={isLoading || loading}
                 autoComplete="off"
                 placeholder={t('Description')}
                 name={`description:${dataLanguage}`}
@@ -210,7 +201,7 @@ export default function EditPlate({
               <div className={styles.imgInputBox}>
                 <Input.FileIcon
                   name="image"
-                  disabled={loading}
+                  disabled={isLoading || loading}
                   icon={AiOutlineEdit}
                   accept="image/*"
                   onChange={(e) => setImage(e.target.files[0])}
@@ -221,8 +212,8 @@ export default function EditPlate({
             <Button
               type="submit"
               fullWidth
-              disabled={loading}
-              loading={loading}
+              disabled={isLoading || loading}
+              loading={isLoading || loading}
             >
               <span className={styles.submitText}>{t('Save')}</span>
             </Button>

@@ -1,7 +1,5 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { IoMdAdd } from 'react-icons/io';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { DebounceInput } from 'react-debounce-input';
 
@@ -17,11 +15,16 @@ import {
 import PlateCard from './PlateCard';
 import AddPlate from './AddPlate';
 import EditPlate from './EditPlate';
-import { getErrorMessage } from '../../utils/getErrorMessage';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { GiCancel } from 'react-icons/gi';
 import styles from './Plates.module.css';
 import { translationTimeout } from '../../constants/translationTimeout';
+import {
+  useCreatePlateMutation,
+  useEditPlateMutation,
+  useGetPlatesQuery,
+  useRemovePlateMutation,
+} from '../../redux/services/plate.service';
 
 const PlateModals = {
   add: 'ADD_PLATE',
@@ -29,47 +32,24 @@ const PlateModals = {
 };
 
 export default function PlatesPage() {
-  const [plates, setPlates] = useState([]);
-  const [platesLoading, setPlatesLoading] = useState(false);
-  const [togglePlateLoading, setTogglePlateLoading] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: plates, isLoading: platesLoading } = useGetPlatesQuery({
+    searchText,
+    page: currentPage,
+  });
+  const [createPlateMutation, { isLoading: createLoading }] =
+    useCreatePlateMutation();
+  const [editPlateMutation, { isLoading: editLoading }] =
+    useEditPlateMutation();
+  const [removePlateMutation] = useRemovePlateMutation();
 
   const [activeModal, setActiveModal] = useState(null);
   const [editPlateId, setEditPlateId] = useState(null);
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  // eslint-disable-next-line no-unused-vars
-  const [pageCount, setPageCount] = useState(9);
-  const [searchText, setSearchText] = useState('');
+  const [totalPages] = useState(plates && plates.meta.last_page);
 
   const { t, i18n } = useTranslation();
-
-  useEffect(() => {
-    fetchPlates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, i18n.language, searchText]);
-
-  function fetchPlates() {
-    setPlatesLoading(true);
-
-    axios({
-      url: '/plates',
-      method: 'GET',
-      headers: {
-        searchText,
-        //restaurant: restaurant_id,
-      },
-      params: {
-        page: currentPage + 1,
-      },
-    })
-      .then((res) => {
-        setPlates(res.data.data);
-        setTotalPages(res.data.meta.last_page);
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setPlatesLoading(false));
-  }
 
   function openAddPlateModal() {
     setActiveModal(PlateModals.add);
@@ -90,81 +70,24 @@ export default function PlatesPage() {
   }
 
   function createPlate(data) {
-    setPlatesLoading(true);
-
-    axios({
-      url: '/plates',
-      method: 'POST',
-      data,
-    })
-      .then(() => {
-        fetchPlates();
-        closeModal();
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setPlatesLoading(false));
+    createPlateMutation(data);
   }
 
   function editPlate(plateId, data) {
-    setPlatesLoading(true);
-
     data.append('_method', 'PATCH');
-
-    axios({
-      url: `/plates/${plateId}`,
-      method: 'POST',
-      data,
-    })
-      .then((res) => {
-        setEditPlateId(null);
-        setPlates((prev) =>
-          prev.map((plateItem) =>
-            plateItem.id === plateId ? res.data.data : plateItem
-          )
-        );
-        closeModal();
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setPlatesLoading(false));
+    editPlateMutation({ plateId, data });
   }
 
   function deletePlate(plateId) {
     if (!window.confirm('Confirm deleting the plate')) return;
-
-    setPlatesLoading(true);
-
-    axios({
-      url: `/plates/${plateId}`,
-      method: 'DELETE',
-    })
-      .then(() => {
-        setPlates((prev) => prev.filter(({ id }) => plateId !== id));
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setPlatesLoading(false));
+    removePlateMutation(plateId);
   }
 
   function togglePlateActive(plateId, active) {
-    setTogglePlateLoading(plateId);
-
     const formData = new FormData();
     formData.append('active', Number(active));
     formData.append('_method', 'PATCH');
-
-    axios({
-      url: `/plates/${plateId}`,
-      method: 'POST',
-      data: formData,
-    })
-      .then((res) => {
-        setPlates((prev) =>
-          prev.map((plateItem) =>
-            plateItem.id === plateId ? res.data.data : plateItem
-          )
-        );
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setTogglePlateLoading(null));
+    editPlateMutation({ plateId, data: formData });
   }
 
   return (
@@ -173,7 +96,7 @@ export default function PlatesPage() {
         <AddPlate
           onCancel={closeModal}
           onSubmit={createPlate}
-          loading={platesLoading}
+          loading={createLoading}
         />
       </Modal>
       <Modal
@@ -184,8 +107,7 @@ export default function PlatesPage() {
           plateId={editPlateId}
           onCancel={closeModal}
           onSubmit={editPlate}
-          loading={platesLoading}
-          setLoading={setPlatesLoading}
+          loading={editLoading}
         />
       </Modal>
       <PageHeader
@@ -230,13 +152,13 @@ export default function PlatesPage() {
         </div>
       )}
 
-      {!platesLoading && plates.length > 0 && (
+      {!platesLoading && plates?.data?.length > 0 && (
         <div className={styles.grid_content}>
-          {plates.map((plate) => (
+          {plates.data.map((plate) => (
             <PlateCard
               key={plate.id}
               {...plate}
-              loading={togglePlateLoading === plate.id}
+              loading={platesLoading}
               onEdit={openEditPlateModal}
               onDelete={deletePlate}
               onToggleActive={togglePlateActive}
@@ -245,7 +167,7 @@ export default function PlatesPage() {
         </div>
       )}
 
-      {plates && plates.length > 9 && (
+      {plates?.data?.length > 9 && (
         <div className={styles.pagination}>
           <Pagination
             currentPage={currentPage}
@@ -255,7 +177,7 @@ export default function PlatesPage() {
         </div>
       )}
 
-      {plates.length === 0 && !platesLoading && (
+      {plates?.data?.length === 0 && !platesLoading && (
         <NotFoundItems title="Haven't plates" />
       )}
     </Layout>

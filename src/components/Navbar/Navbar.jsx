@@ -12,16 +12,16 @@ import Settings from './Settings';
 import User from './User';
 import { NotFoundItems, Dropdown } from '../';
 import { ordersSelectors } from '../../redux/orders';
-import { authSelectors } from '../../redux/auth';
 import { hotelSelectors } from '../../redux/hotel';
 import urls from '../../config/urls';
+import { getUserSelector } from '../../redux/features/auth-slice';
 
 export default function Navbar({ onOpenSidebar }) {
   const { t, i18n } = useTranslation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const location = useLocation();
 
-  const user = useSelector(authSelectors.getUser);
+  const user = useSelector(getUserSelector);
   const hotel = useSelector(hotelSelectors.getHotel);
   const newOrdersCount = useSelector(ordersSelectors.getNewOrdersCount);
 

@@ -2,14 +2,13 @@ import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 import urls from '../../config/urls';
 import sharedStyles from '../../styles/LoginSignUpShared.module.css';
 import { Input, Button, FormRow } from '../../components';
 import logoImg from '../../images/Ouiorder_logo_horiz.svg';
-import { authOperations, authSelectors } from '../../redux/auth';
+import { useRegisterMutation } from '../../redux/services/auth.service';
 
 const validationSchema = Yup.object().shape({
   restaurant_name: Yup.string()
@@ -47,14 +46,14 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function SignUpPage() {
+  const [registerUserMutation, { isLoading: authLoading }] =
+    useRegisterMutation();
   const [image, setImage] = useState(null);
   const [imageTouched, setImageTouched] = useState(false);
 
   const { t } = useTranslation();
 
-  const dispatch = useDispatch();
   const formRef = useRef();
-  const authLoading = useSelector(authSelectors.getLoading);
 
   const formik = useFormik({
     initialValues: {
@@ -70,7 +69,7 @@ export default function SignUpPage() {
     validationSchema,
     onSubmit: () => {
       const formData = new FormData(formRef.current);
-      dispatch(authOperations.signUp(formData));
+      registerUserMutation(formData);
     },
   });
 

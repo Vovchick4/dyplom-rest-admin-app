@@ -7,14 +7,14 @@ export default function BillRequest({ data, isLoading }) {
     <div className={styles.content}>
       <div className={styles.content_title}>
         Bill Request
-        {data.bill_request.length === 0 && (
+        {data?.bill_request.length === 0 && (
           <span>Doesn't have Bill Request</span>
         )}
         {isLoading && <Loader size={3.4} />}
       </div>
 
       <div className={styles.content_card}>
-        {!isLoading && data.bill_request.length > 0 && (
+        {!isLoading && data?.bill_request.length > 0 && (
           <div className={styles.content_card}>
             {data.bill_request.map(({ id, table_number, created_at }) => (
               <div

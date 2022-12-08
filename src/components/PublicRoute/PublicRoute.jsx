@@ -1,11 +1,11 @@
 import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { authSelectors } from '../../redux/auth';
 import urls from '../../config/urls';
+import { getIsAuthenticated } from '../../redux/features/auth-slice';
 
 export default function PublicRoute({ children, ...routeProps }) {
-  const isAuthenticated = useSelector(authSelectors.isAuthenticated);
+  const isAuthenticated = useSelector(getIsAuthenticated);
 
   return (
     <Route {...routeProps}>

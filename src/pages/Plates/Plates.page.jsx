@@ -34,7 +34,11 @@ const PlateModals = {
 export default function PlatesPage() {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: plates, isLoading: platesLoading } = useGetPlatesQuery({
+  const {
+    data: plates,
+    isLoading: platesLoading,
+    isFetching: platesFetching,
+  } = useGetPlatesQuery({
     searchText,
     page: currentPage,
   });
@@ -145,13 +149,13 @@ export default function PlatesPage() {
         </div>
       </div>
 
-      {platesLoading && (
+      {platesLoading || platesFetching ? (
         <div className={styles.loader}>
           <Loader centered />
         </div>
-      )}
+      ) : null}
 
-      {!platesLoading && plates?.data?.length > 0 && (
+      {!platesLoading && !platesFetching && plates?.data?.length > 0 && (
         <div className={styles.grid_content}>
           {plates.data.map((plate) => (
             <PlateCard

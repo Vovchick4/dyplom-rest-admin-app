@@ -9,25 +9,33 @@ import {
   REGISTER,
 } from 'redux-persist';
 
-import { authReducer } from './auth';
 import { ordersReducer } from './orders';
 import { hotelReducer } from './hotel';
 
+import { authSlice, localeSlice, restSlice } from "./features";
+import { tableService, orderService, restaurantService, plateService, authService } from './services';
+// SlicesReducers
+const { authReducer } = authSlice;
+const { localeReducer } = localeSlice;
+const { restReducer } = restSlice;
 // TableServices
-import { tableService, orderService, restaurantService, plateService } from './services';
 const { tableServiceReducePath, tableServiceReducer, tableServiceMiddleware } = tableService
 const { orderServiceReducePath, orderServiceReducer, orderServiceMiddleware } = orderService
 const { restaurantServiceReducePath, restaurantServiceReducer, restaurantServiceMiddleware } = restaurantService
 const { plateServiceReducePath, plateServiceReducer, plateServiceMiddleware } = plateService
+const { authServiceReducePath, authServiceReducer, authServiceMiddleware } = authService
 
 const rootReducer = combineReducers({
   auth: authReducer,
   orders: ordersReducer,
   hotel: hotelReducer,
-  [tableServiceReducePath]: tableServiceReducer,
+  locale: localeReducer,
+  rest: restReducer,
+  [authServiceReducePath]: authServiceReducer,
   [orderServiceReducePath]: orderServiceReducer,
-  [restaurantServiceReducePath]: restaurantServiceReducer,
   [plateServiceReducePath]: plateServiceReducer,
+  [tableServiceReducePath]: tableServiceReducer,
+  [restaurantServiceReducePath]: restaurantServiceReducer,
 });
 
 export const store = configureStore({
@@ -37,7 +45,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(tableServiceMiddleware, orderServiceMiddleware, restaurantServiceMiddleware, plateServiceMiddleware),
+    }).concat(authServiceMiddleware, tableServiceMiddleware, orderServiceMiddleware, restaurantServiceMiddleware, plateServiceMiddleware),
 });
 
 export const persistor = persistStore(store);

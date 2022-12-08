@@ -1,11 +1,11 @@
 export function getErrorMessage(error) {
   if (error === undefined) return;
-  if (!error?.response) {
+  if (!error?.response && !error?.data?.errors) {
     return error.message;
   }
 
-  let message = error.response.data.message;
-  const errors = error.response.data.errors;
+  let message = error?.response?.data?.message;
+  const errors = error?.response !== undefined ? error.response.data.errors : error.data.errors;
 
   if (errors) {
     if (typeof errors === 'object') {

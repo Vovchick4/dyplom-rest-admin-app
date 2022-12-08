@@ -7,11 +7,11 @@ export default function WaiterCall({ data, isLoading }) {
     <div className={styles.content}>
       <div className={styles.content_title}>
         Waiter Call
-        {data.waiter.length === 0 && <span>Doesn't have Waiter Call</span>}
+        {data?.waiter.length === 0 && <span>Doesn't have Waiter Call</span>}
         {isLoading && <Loader size={3.4} />}
       </div>
 
-      {!isLoading && data.waiter.length > 0 && (
+      {!isLoading && data?.waiter.length > 0 && (
         <div className={styles.content_card}>
           {data.waiter.map(({ id, table_number, created_at }) => (
             <div

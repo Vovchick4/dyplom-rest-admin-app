@@ -8,21 +8,26 @@ import { toast } from 'react-toastify';
 import routes from '../../config/routes';
 import urls from '../../config/urls';
 import { PrivateRoute, PublicRoute, Loader } from '../';
-import { authOperations, authSelectors } from '../../redux/auth';
+// import { authOperations, authSelectors } from '../../redux/auth';
 import { hotelOperations, hotelSelectors } from '../../redux/hotel';
 import { echo } from '../../config/echo';
 import { orderApi } from '../../redux/services/order.service';
+import { authSlice } from '../../redux/features';
+import { useGetUserQuery } from '../../redux/services/auth.service';
+const { getUserSelector } = authSlice;
 
 export default function App() {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
 
-  const user = useSelector(authSelectors.getUser);
+  const user = useSelector(getUserSelector);
   const hotel = useSelector(hotelSelectors.getHotel);
 
-  useEffect(() => {
-    dispatch(authOperations.getUser());
-  }, [dispatch]);
+  //GetUser
+  useGetUserQuery();
+  // useEffect(() => {
+  //   dispatch(authOperations.getUser());
+  // }, [dispatch]);
 
   useEffect(() => {
     if (!user || user.role !== 'super-admin') {

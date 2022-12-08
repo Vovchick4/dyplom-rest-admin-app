@@ -8,14 +8,14 @@ import Order from './Order';
 import Statistics from './Statistics/Statistics';
 import { data } from './data';
 
-import { authSelectors } from '../../redux/auth';
 import { hotelSelectors } from '../../redux/hotel';
 import styles from './Home.module.css';
+import { getUserSelector } from '../../redux/features/auth-slice';
 
 const clientBaseURL = 'https://resthotel.ouiorder.fr';
 
 export default function HomePage() {
-  const user = useSelector(authSelectors.getUser);
+  const user = useSelector(getUserSelector);
   const restaurant = useSelector(hotelSelectors.getHotel);
   const [qrCodeValue, setQrCodeValue] = useState(null);
   const [clientSideUrl, setClientSideUrl] = useState(null);
@@ -35,6 +35,10 @@ export default function HomePage() {
     QRcode.toDataURL(url, {
       width: 200,
     }).then((value) => setQrCodeValue(value));
+
+    return () => {
+      setQrCodeValue(null);
+    };
   }, [user, restaurant]);
 
   return (

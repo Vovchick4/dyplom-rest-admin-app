@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { SiFacebook, SiTwitter, SiGoogle } from 'react-icons/si';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 
@@ -11,8 +10,11 @@ import sharedStyles from '../../styles/LoginSignUpShared.module.css';
 import styles from './Login.module.css';
 import { Input, Button, Checkbox, FormRow } from '../../components';
 import logoImg from '../../images/Ouiorder_logo_horiz.svg';
-import { authOperations, authSelectors } from '../../redux/auth';
 import { ApiUrl } from '../../config/axios';
+import {
+  useLoginMutation,
+  useResetUserPasswordMutation,
+} from '../../redux/services/auth.service';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -27,10 +29,10 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function LoginPage() {
-  const dispatch = useDispatch();
+  const [logInUserMutation, { isLoading: authLoading }] = useLoginMutation();
+  const [resetPasswordUserMutation, { isLoading: resetPasswordLoading }] =
+    useResetUserPasswordMutation();
   const { t } = useTranslation();
-
-  const authLoading = useSelector(authSelectors.getLoading);
 
   const formik = useFormik({
     initialValues: {
@@ -41,12 +43,10 @@ export default function LoginPage() {
     validationSchema,
     onSubmit: (values) => {
       const formattedValues = validationSchema.cast(values);
-      dispatch(
-        authOperations.login({
-          ...values,
-          remember_me: Number(formattedValues.rememberMe),
-        })
-      );
+      logInUserMutation({
+        ...values,
+        remember_me: Number(formattedValues.rememberMe),
+      });
     },
   });
 
@@ -56,7 +56,7 @@ export default function LoginPage() {
       return;
     }
 
-    dispatch(authOperations.resetPassword(formik.values.email));
+    resetPasswordUserMutation(formik.values.email);
   }
 
   return (
@@ -87,7 +87,7 @@ export default function LoginPage() {
               <Input
                 type="email"
                 required
-                disabled={authLoading}
+                disabled={authLoading || resetPasswordLoading}
                 autoComplete="email"
                 placeholder={t('Email')}
                 name="email"
@@ -102,7 +102,7 @@ export default function LoginPage() {
               <Input
                 type="password"
                 required
-                disabled={authLoading}
+                disabled={authLoading || resetPasswordLoading}
                 autoComplete="current-password"
                 placeholder={t('Password')}
                 name="password"
@@ -116,7 +116,7 @@ export default function LoginPage() {
             <FormRow>
               <Checkbox
                 label={t('Remember me')}
-                disabled={authLoading}
+                disabled={authLoading || resetPasswordLoading}
                 name="rememberMe"
                 checked={formik.values.rememberMe}
                 onChange={formik.handleChange}
@@ -128,8 +128,8 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 fullWidth
-                disabled={authLoading}
-                loading={authLoading}
+                disabled={authLoading || resetPasswordLoading}
+                loading={authLoading || resetPasswordLoading}
               >
                 {t('LOGIN')}
               </Button>

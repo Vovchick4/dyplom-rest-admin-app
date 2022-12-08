@@ -8,14 +8,15 @@ import {
 } from 'react-icons/bi';
 import { FaBlender } from 'react-icons/fa';
 import { BsPerson, BsPencil } from 'react-icons/bs';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 import styles from './Sidebar.module.css';
 import urls from '../../config/urls';
 import { Button } from '../';
 import logoImg from '../../images/Ouiorder_logo_horiz.svg';
-import { authOperations, authSelectors } from '../../redux/auth';
+import { getUserSelector } from '../../redux/features/auth-slice';
+import { useLogoutMutation } from '../../redux/services/auth.service';
 
 const links = [
   {
@@ -69,6 +70,7 @@ const links = [
 ];
 
 export default function Sidebar({ open, onClose }) {
+  const [logoutMutation] = useLogoutMutation();
   const containerClasses = [styles.container];
   const dimmerClasses = [styles.dimmer];
   if (open) {
@@ -76,12 +78,11 @@ export default function Sidebar({ open, onClose }) {
     dimmerClasses.push(styles.active);
   }
 
-  const dispatch = useDispatch();
-  const user = useSelector(authSelectors.getUser);
+  const user = useSelector(getUserSelector);
   const { t } = useTranslation();
 
   function logout() {
-    dispatch(authOperations.logout());
+    logoutMutation();
   }
 
   return (

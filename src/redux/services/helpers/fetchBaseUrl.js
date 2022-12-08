@@ -9,6 +9,7 @@ const fetchBaseUrl = fetchBaseQuery({
         // Set aceesstoken default 
         const { token: userToken } = getState().auth
         const data = getState().hotel
+        const locale = getState().locale.locale
         if (userToken?.accessToken) {
             setToken(headers, `Bearer ${userToken.accessToken}`)
         } else {
@@ -17,6 +18,10 @@ const fetchBaseUrl = fetchBaseQuery({
         // Set HotelId to default
         if (data?.id) {
             headers.set("restaurant", data?.id)
+        }
+        // Set locale to default
+        if (locale) {
+            headers.set("locale", locale)
         }
         return headers
     }

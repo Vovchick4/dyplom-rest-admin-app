@@ -2,7 +2,7 @@ import Popup from 'reactjs-popup';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import styles from './Navbar.module.css';
@@ -15,12 +15,14 @@ import { ordersSelectors } from '../../redux/orders';
 import { hotelSelectors } from '../../redux/hotel';
 import urls from '../../config/urls';
 import { getUserSelector } from '../../redux/features/auth-slice';
+import { setLocale } from '../../redux/features/localization-slice';
 
 export default function Navbar({ onOpenSidebar }) {
   const { t, i18n } = useTranslation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const location = useLocation();
 
+  const dispatch = useDispatch();
   const user = useSelector(getUserSelector);
   const hotel = useSelector(hotelSelectors.getHotel);
   const newOrdersCount = useSelector(ordersSelectors.getNewOrdersCount);
@@ -98,16 +100,14 @@ export default function Navbar({ onOpenSidebar }) {
                       key: 'en',
                       label: 'EN',
                       onClick: () => {
-                        i18n.changeLanguage('en');
-                        localStorage.setItem('language', 'en');
+                        dispatch(setLocale('en'));
                       },
                     },
                     {
                       key: 'fr',
                       label: 'FR',
                       onClick: () => {
-                        i18n.changeLanguage('fr');
-                        localStorage.setItem('language', 'fr');
+                        dispatch(setLocale('fr'));
                       },
                     },
                   ]}

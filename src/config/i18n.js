@@ -1,9 +1,11 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
+// import { useDispatch } from 'react-redux';
 
 import en from '../locales/en.json';
 import fr from '../locales/fr.json';
-import { setLocale } from './axios';
+// import { platetApi } from '../redux/services/plate.service';
+// import { setLocale } from './axios';
 
 i18next.use(initReactI18next).init({
   resources: {
@@ -15,5 +17,7 @@ i18next.use(initReactI18next).init({
 });
 
 i18next.on('languageChanged', (lng) => {
-  setLocale(lng);
+  // const dispatch = useFetchEvents();
+  // dispatch(platetApi.util.invalidateTags(lng));
+  // setLocale(lng);
 });

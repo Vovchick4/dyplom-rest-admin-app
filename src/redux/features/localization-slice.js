@@ -7,12 +7,12 @@ const localeSlice = createSlice({
     name: 'locale',
     initialState,
     reducers: {
-        setLocale: (state, { payload }) => (payload)
+        setLocale: (state, { payload }) => ({ locale: payload })
     }
 })
 
 export const { setLocale } = localeSlice.actions
-export const getLocaleSelector = (state) => state.localeReducer.locale
+export const getLocaleSelector = (state) => state.locale.locale
 export const localeReducer = persistReducer({
     key: 'rtk:locale',
     storage

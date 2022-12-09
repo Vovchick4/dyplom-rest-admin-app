@@ -11,9 +11,12 @@ import { PrivateRoute, PublicRoute, Loader } from '../';
 // import { authOperations, authSelectors } from '../../redux/auth';
 import { hotelOperations, hotelSelectors } from '../../redux/hotel';
 import { echo } from '../../config/echo';
+import { plateApi } from '../../redux/services/plate.service';
 import { orderApi } from '../../redux/services/order.service';
 import { authSlice } from '../../redux/features';
 import { useGetUserQuery } from '../../redux/services/auth.service';
+import { getLocaleSelector } from '../../redux/features/localization-slice';
+
 const { getUserSelector } = authSlice;
 
 export default function App() {
@@ -22,9 +25,11 @@ export default function App() {
 
   const user = useSelector(getUserSelector);
   const hotel = useSelector(hotelSelectors.getHotel);
+  const locale = useSelector(getLocaleSelector);
 
   //GetUser
   useGetUserQuery();
+
   // useEffect(() => {
   //   dispatch(authOperations.getUser());
   // }, [dispatch]);
@@ -109,17 +114,22 @@ export default function App() {
   }
 
   useEffect(() => {
-    const persistedLanguage = localStorage.getItem('language');
+    const persistedLanguage = locale;
     if (!persistedLanguage) return;
 
     i18n.changeLanguage(persistedLanguage);
-  }, [i18n]);
+
+    dispatch(plateApi.util.invalidateTags(['Plate']));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale]);
 
   useEffect(() => {
     if (!user) return;
 
     const hotelId =
       user.role === 'super-admin' && hotel ? hotel.id : user.restaurant_id;
+
+    console.log(hotelId);
 
     echo.channel(`restaurants.${hotelId}`).listen('OrderCreated', (e) => {
       toast('New order arrived');

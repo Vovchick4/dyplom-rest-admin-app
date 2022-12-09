@@ -4,7 +4,8 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 import { fetchBaseUrl } from "./helpers"
 import { getErrorMessage } from "../../utils/getErrorMessage"
 
-export const platetApi = createApi({
+
+export const plateApi = createApi({
     reducerPath: "platetApi",
     baseQuery: fetchBaseUrl,
     tagTypes: ["Plate"],
@@ -91,13 +92,13 @@ export const platetApi = createApi({
 
 // Exports Hooks
 export const { useGetPlatesQuery, useGetPlateByIdQuery, useCreatePlateMutation,
-    useEditPlateMutation, useRemovePlateMutation } = platetApi
+    useEditPlateMutation, useRemovePlateMutation } = plateApi
 
 // Export reducer
-export const plateServiceReducer = platetApi.reducer
+export const plateServiceReducer = plateApi.reducer
 
 // Export reducerPath
-export const plateServiceReducePath = platetApi.reducerPath
+export const plateServiceReducePath = plateApi.reducerPath
 
 // Export middleware
-export const plateServiceMiddleware = platetApi.middleware
+export const plateServiceMiddleware = plateApi.middleware

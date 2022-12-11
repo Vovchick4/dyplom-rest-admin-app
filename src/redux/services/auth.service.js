@@ -87,7 +87,7 @@ export const authApi = createApi({
                 url: '/auth/get-user',
             }),
             providesTags: ["Auth"],
-            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
                 try {
                     const { data } = await queryFulfilled
                     dispatch(setUser(data.data))

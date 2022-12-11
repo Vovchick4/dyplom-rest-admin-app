@@ -7,7 +7,7 @@ import { getErrorMessage } from "../../utils/getErrorMessage"
 export const restaruantApi = createApi({
     reducerPath: "restaruantApi",
     baseQuery: fetchBaseUrl,
-    tagTypes: ["Restaurant"],
+    tagTypes: ["Restaurant", "Locales"],
     endpoints: (builder) => ({
         getRestaurants: builder.query({
             query: ({ page }) => ({
@@ -16,7 +16,7 @@ export const restaruantApi = createApi({
                     page
                 }
             }),
-            providesTags: ["Restaurant"],
+            providesTags: ["Restaurant", "Locales"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

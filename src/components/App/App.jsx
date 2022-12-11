@@ -5,13 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
+import { useEventTags } from '../../hooks';
 import routes from '../../config/routes';
 import urls from '../../config/urls';
 import { PrivateRoute, PublicRoute, Loader } from '../';
-// import { authOperations, authSelectors } from '../../redux/auth';
 import { hotelOperations, hotelSelectors } from '../../redux/hotel';
 import { echo } from '../../config/echo';
-import { plateApi } from '../../redux/services/plate.service';
+import { getIsAuthenticated } from '../../redux/features/auth-slice';
 import { orderApi } from '../../redux/services/order.service';
 import { authSlice } from '../../redux/features';
 import { useGetUserQuery } from '../../redux/services/auth.service';
@@ -23,16 +23,15 @@ export default function App() {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
 
+  const { dispatchsEvent } = useEventTags();
+
   const user = useSelector(getUserSelector);
+  const isAuth = useSelector(getIsAuthenticated);
   const hotel = useSelector(hotelSelectors.getHotel);
   const locale = useSelector(getLocaleSelector);
 
   //GetUser
-  useGetUserQuery();
-
-  // useEffect(() => {
-  //   dispatch(authOperations.getUser());
-  // }, [dispatch]);
+  useGetUserQuery(null, { skip: !isAuth });
 
   useEffect(() => {
     if (!user || user.role !== 'super-admin') {
@@ -119,7 +118,7 @@ export default function App() {
 
     i18n.changeLanguage(persistedLanguage);
 
-    dispatch(plateApi.util.invalidateTags(['Plate']));
+    dispatchsEvent(['Locales']);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale]);
 
@@ -128,8 +127,6 @@ export default function App() {
 
     const hotelId =
       user.role === 'super-admin' && hotel ? hotel.id : user.restaurant_id;
-
-    console.log(hotelId);
 
     echo.channel(`restaurants.${hotelId}`).listen('OrderCreated', (e) => {
       toast('New order arrived');

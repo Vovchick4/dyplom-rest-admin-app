@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import { Input, FormRow, Container, Button } from '../../../components';
-import { getErrorMessage } from '../../../utils/getErrorMessage';
 
 import styles from '../AddRestaurant/AddRestaurant.module.css';
 import placeholderImage from '../../../images/placeholder.jpg';
+import { useGetRestaurantByIdEditQuery } from '../../../redux/services/restaurant.service';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -30,10 +28,11 @@ const reader = new FileReader();
 export default function EditRestaurant({
   restId,
   loading,
-  setLoading,
   onSubmit,
   onCancel,
 }) {
+  const { data, isLoading } = useGetRestaurantByIdEditQuery(restId);
+
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(placeholderImage);
 
@@ -42,7 +41,6 @@ export default function EditRestaurant({
   const formRef = useRef();
 
   useEffect(() => {
-    console.log(!image);
     if (!image) {
       setImagePreview(placeholderImage);
     } else {
@@ -69,25 +67,14 @@ export default function EditRestaurant({
   });
 
   useEffect(() => {
-    setLoading(true);
-
-    axios({
-      url: `/restaurants/${restId}`,
-      method: 'GET',
-    })
-      .then((res) => {
-        const restData = res.data.data;
-        setImagePreview(restData.logo);
-
-        formik.setValues({
-          name: restData.name,
-          address: restData.address,
-        });
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setLoading(false));
+    if (!data) return;
+    setImagePreview(data.logo);
+    formik.setValues({
+      name: data.name,
+      address: data.address,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data]);
 
   return (
     <React.Fragment>
@@ -103,7 +90,7 @@ export default function EditRestaurant({
             <FormRow>
               <Input
                 required
-                disabled={loading}
+                disabled={isLoading || loading}
                 type="text"
                 placeholder={t('Name of the hotel')}
                 autoComplete="name"
@@ -117,7 +104,7 @@ export default function EditRestaurant({
             <FormRow>
               <Input
                 required
-                disabled={loading}
+                disabled={isLoading || loading}
                 type="text"
                 placeholder={t('Address')}
                 autoComplete="street-address"
@@ -139,7 +126,7 @@ export default function EditRestaurant({
               <div className={styles.imgInputBox}>
                 <Input.FileIcon
                   name="logo"
-                  isabled={loading}
+                  isabled={isLoading || loading}
                   icon={AiOutlineEdit}
                   accept="image/*"
                   onChange={(e) => setImage(e.target.files[0])}
@@ -150,8 +137,8 @@ export default function EditRestaurant({
             <Button
               type="submit"
               fullWidth
-              disabled={loading}
-              loading={loading}
+              disabled={isLoading || loading}
+              loading={isLoading || loading}
             >
               <span className={styles.submitText}>{t('Save')}</span>
             </Button>

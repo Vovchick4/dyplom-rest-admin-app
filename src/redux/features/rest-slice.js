@@ -7,12 +7,13 @@ const restSlice = createSlice({
     name: 'rest',
     initialState,
     reducers: {
-        setRest: (state, { payload }) => (payload)
+        setRest: (state, { payload }) => (payload),
+        setRestId: (state, { payload }) => ({ id: payload })
     }
 })
 
-export const { setRest } = restSlice.actions
-export const getRestSelector = (state) => state.restReducer
+export const { setRest, setRestId } = restSlice.actions
+export const getRestSelector = (state) => state.rest
 export const restReducer = persistReducer({
     key: 'rtk:rest',
     storage

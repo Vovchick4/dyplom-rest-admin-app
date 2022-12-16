@@ -3,6 +3,7 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 
 import { fetchBaseUrl } from "./helpers"
 import { getErrorMessage } from "../../utils/getErrorMessage"
+import { setRest } from "../features/rest-slice"
 
 export const restaruantApi = createApi({
     reducerPath: "restaruantApi",
@@ -10,12 +11,14 @@ export const restaruantApi = createApi({
     tagTypes: ["Restaurant", "Locales"],
     endpoints: (builder) => ({
         getRestaurants: builder.query({
-            query: ({ page }) => ({
-                url: "restaurants",
-                params: {
-                    page
+            query: ({ page, searchText }) => {
+                const url = !searchText ? `restaurants` : `restaurants/search/${searchText}`
+                const params = !searchText ? { page } : {}
+                return {
+                    url,
+                    params
                 }
-            }),
+            },
             providesTags: ["Restaurant", "Locales"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
@@ -38,11 +41,25 @@ export const restaruantApi = createApi({
                 }
             }
         }),
-        getRestaurantById: builder.mutation({
+        getRestaurantById: builder.query({
             query: (restId) => ({
                 url: `restaurants/${restId}`,
             }),
-            invalidatesTags: ["Restaurant"],
+            transformResponse: (res) => res.data,
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    const { data } = await queryFulfilled
+                    dispatch(setRest(data));
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        }),
+        getRestaurantByIdEdit: builder.query({
+            query: (restId) => ({
+                url: `restaurants/${restId}`,
+            }),
+            transformResponse: (res) => res.data,
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -67,10 +84,10 @@ export const restaruantApi = createApi({
             }
         }),
         editRestaurant: builder.mutation({
-            query: ({ restId, data }) => ({
+            query: ({ restId, params }) => ({
                 method: "POST",
                 url: `restaurants/${restId}`,
-                body: { _method: "PATCH", ...data }
+                body: { _method: "PATCH", ...params }
             }),
             invalidatesTags: ["Restaurant"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
@@ -100,7 +117,7 @@ export const restaruantApi = createApi({
 
 // Exports Hooks
 export const { useGetRestaurantsQuery, useGetRestaurantsSearchtextQuery,
-    useGetRestaurantByIdMutation, useCreateRestaurantMutation,
+    useGetRestaurantByIdQuery, useGetRestaurantByIdEditQuery, useCreateRestaurantMutation,
     useEditRestaurantMutation, useRemoveRestaurantMutation } = restaruantApi
 
 // Export reducer

@@ -33,14 +33,14 @@ const PlateModals = {
 
 export default function PlatesPage() {
   const [searchText, setSearchText] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const {
     data: plates,
     isLoading: platesLoading,
     isFetching: platesFetching,
   } = useGetPlatesQuery({
     searchText,
-    page: currentPage,
+    page: currentPage + 1,
   });
   const [createPlateMutation, { isLoading: createLoading }] =
     useCreatePlateMutation();
@@ -50,8 +50,6 @@ export default function PlatesPage() {
 
   const [activeModal, setActiveModal] = useState(null);
   const [editPlateId, setEditPlateId] = useState(null);
-
-  const [totalPages] = useState(plates && plates.meta.last_page);
 
   const { t, i18n } = useTranslation();
 
@@ -174,7 +172,7 @@ export default function PlatesPage() {
         <div className={styles.pagination}>
           <Pagination
             currentPage={currentPage}
-            pageCount={totalPages}
+            pageCount={plates?.meta.last_page}
             onPageChange={changePage}
           />
         </div>

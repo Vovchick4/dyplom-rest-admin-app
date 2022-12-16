@@ -56,7 +56,18 @@ export default function RestCard({
         />
       </div>
 
-      <div className={styles.card_content} onClick={() => onSelect(id)}>
+      <div
+        className={styles.card_content}
+        onClick={() =>
+          onSelect({
+            id,
+            logo,
+            name,
+            address,
+            phone,
+          })
+        }
+      >
         <div className={styles.imgBox}>
           <img className={styles.img} src={logo} alt={name} />
         </div>

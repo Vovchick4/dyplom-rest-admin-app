@@ -8,15 +8,15 @@ import Order from './Order';
 import Statistics from './Statistics/Statistics';
 import { data } from './data';
 
-import { hotelSelectors } from '../../redux/hotel';
 import styles from './Home.module.css';
 import { getUserSelector } from '../../redux/features/auth-slice';
+import { getRestSelector } from '../../redux/features/rest-slice';
 
-const clientBaseURL = 'https://resthotel.ouiorder.fr';
+const clientBaseURL = 'http://localhost:3001';
 
 export default function HomePage() {
   const user = useSelector(getUserSelector);
-  const restaurant = useSelector(hotelSelectors.getHotel);
+  const restaurant = useSelector(getRestSelector);
   const [qrCodeValue, setQrCodeValue] = useState(null);
   const [clientSideUrl, setClientSideUrl] = useState(null);
 

@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DebounceInput } from 'react-debounce-input';
-import { toast } from 'react-toastify';
 import { IoMdAdd } from 'react-icons/io';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { GiCancel } from 'react-icons/gi';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { getErrorMessage } from '../../utils/getErrorMessage';
-import { hotelOperations } from '../../redux/hotel';
 import urls from '../../config/urls';
 
 import {
@@ -28,6 +24,13 @@ import EditRestaurant from './EditRestaurant';
 
 import styles from './RestaurantList.module.css';
 import { translationTimeout } from '../../constants/translationTimeout';
+import { setRest } from '../../redux/features/rest-slice';
+import {
+  useGetRestaurantsQuery,
+  useCreateRestaurantMutation,
+  useEditRestaurantMutation,
+  useRemoveRestaurantMutation,
+} from '../../redux/services/restaurant.service';
 
 const sortingOptions = [
   {
@@ -57,14 +60,18 @@ export default function RestaurantList() {
   const [searchText, setSearchText] = useState('');
   const [activeModal, setActiveModal] = useState(null);
   const [editRestId, setEditRestId] = useState(null);
-
-  const [restaurants, setRestaurants] = useState([]);
-  const [restLoading, setRestLoading] = useState(false);
+  const [sortBy, setSortBy] = useState(sortingOptions[0].value);
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-
-  const [sortBy, setSortBy] = useState(sortingOptions[0].value);
+  const { data: restaurants, isLoading: restLoading } = useGetRestaurantsQuery({
+    page: currentPage + 1,
+    searchText,
+  });
+  const [createRestaurantMutator, { isLoading: createLoading }] =
+    useCreateRestaurantMutation();
+  const [updateRestaurantMutator, { isLoading: updateLoading }] =
+    useEditRestaurantMutation();
+  const [deleteRestaurantMutator] = useRemoveRestaurantMutation();
 
   const { t, i18n } = useTranslation();
   const history = useHistory();
@@ -80,7 +87,6 @@ export default function RestaurantList() {
   }
 
   function closeModal() {
-    setEditRestId(null);
     setActiveModal(null);
   }
 
@@ -88,100 +94,22 @@ export default function RestaurantList() {
     setCurrentPage(selected);
   }
 
-  useEffect(() => {
-    fetchRests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchText, i18n.language]);
-
-  function fetchRests() {
-    setRestLoading(true);
-
-    if (!searchText) {
-      axios({
-        url: '/restaurants',
-        method: 'GET',
-        params: {
-          page: currentPage + 1,
-        },
-      })
-        .then((res) => {
-          setRestaurants(res.data.data);
-          setTotalPages(res.data.meta.last_page);
-        })
-        .catch((error) => toast.error(getErrorMessage(error)))
-        .finally(() => setRestLoading(false));
-    } else {
-      axios({
-        url: `/restaurants/search/${searchText}`,
-        method: 'GET',
-      })
-        .then((res) => {
-          setRestaurants(res.data.data);
-        })
-        .catch((error) => toast.error(getErrorMessage(error)))
-        .finally(() => setRestLoading(false));
-    }
-  }
-
   function createRestaurant(data) {
-    setRestaurants(true);
-
-    axios({
-      url: '/restaurants',
-      method: 'POST',
-      data,
-    })
-      .then(() => {
-        fetchRests();
-        closeModal();
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setRestaurants(false));
+    createRestaurantMutator(data);
   }
 
   function editRestaurant(restId, data) {
-    setRestLoading(true);
-
-    data.append('_method', 'PATCH');
-
-    axios({
-      url: `/restaurants/${restId}`,
-      method: 'POST',
-      data,
-    })
-      .then((res) => {
-        setEditRestId(null);
-        setRestaurants((prev) =>
-          prev.map((restItem) =>
-            restItem.id === restId ? res.data.data : restItem
-          )
-        );
-        closeModal();
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setRestLoading(false));
+    updateRestaurantMutator({ restId, data });
   }
 
   function deleteRestaurant(restId) {
     if (!window.confirm('Confirm deleting the plate')) return;
-
-    setRestLoading(true);
-
-    axios({
-      url: `/restaurants/${restId}`,
-      method: 'DELETE',
-    })
-      .then(() => {
-        setRestaurants((prev) => prev.filter(({ id }) => restId !== id));
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setRestLoading(false));
+    deleteRestaurantMutator(restId);
   }
 
-  function selectHotel(hotelId) {
-    dispatch(
-      hotelOperations.getHotelById(hotelId, () => history.push(urls.home))
-    );
+  function selectRestaurant(restData) {
+    dispatch(setRest(restData));
+    history.push(urls.home);
   }
 
   return (
@@ -203,7 +131,7 @@ export default function RestaurantList() {
         <AddRestaurant
           onSubmit={createRestaurant}
           onCancel={closeModal}
-          loading={restLoading}
+          loading={createLoading}
         />
       </Modal>
 
@@ -212,8 +140,7 @@ export default function RestaurantList() {
           restId={editRestId}
           onSubmit={editRestaurant}
           onCancel={closeModal}
-          loading={restLoading}
-          setLoading={setRestLoading}
+          loading={updateLoading}
         />
       </Modal>
 
@@ -255,28 +182,29 @@ export default function RestaurantList() {
         </div>
       )}
 
-      {!restLoading && restaurants.length > 0 && (
+      {!restLoading && restaurants?.data.length > 0 && (
         <div className={styles.grid_content}>
-          {restaurants.map((rest) => (
+          {restaurants.data.map((rest) => (
             <RestCard
               key={rest.id}
               {...rest}
               onEdit={openEditRestModal}
               onDelete={deleteRestaurant}
-              onSelect={selectHotel}
+              onSelect={selectRestaurant}
             />
           ))}
         </div>
       )}
 
-      {restaurants && (
+      {restaurants && !searchText && (
         <div className={styles.pagination}>
           <p className={styles.paginationText}>
-            Showing {currentPage + 1} out of {totalPages} restaurants
+            Showing {currentPage + 1} out of {restaurants?.meta.last_page}{' '}
+            restaurants
           </p>
           <Pagination
             currentPage={currentPage}
-            pageCount={totalPages}
+            pageCount={restaurants?.meta.last_page}
             onPageChange={changePage}
           />
         </div>

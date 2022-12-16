@@ -8,7 +8,7 @@ const fetchBaseUrl = fetchBaseQuery({
     baseUrl: ApiUrl, prepareHeaders: (headers, { getState }) => {
         // Set aceesstoken default 
         const { token: userToken } = getState().auth
-        const data = getState().hotel
+        const data = getState().rest
         const locale = getState().locale.locale
         if (userToken?.accessToken) {
             setToken(headers, `Bearer ${userToken.accessToken}`)

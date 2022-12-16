@@ -8,7 +8,7 @@ import { getErrorMessage } from "../../utils/getErrorMessage"
 export const plateApi = createApi({
     reducerPath: "platetApi",
     baseQuery: fetchBaseUrl,
-    tagTypes: ["Plate", "Locales"],
+    tagTypes: ["Plate", "Locales", "RestaurantId"],
     endpoints: (builder) => ({
         getPlates: builder.query({
             query: ({ searchText, page }) => ({
@@ -20,7 +20,7 @@ export const plateApi = createApi({
                     page
                 }
             }),
-            providesTags: ["Plate", "Locales"],
+            providesTags: ["Plate", "Locales", "RestaurantId"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

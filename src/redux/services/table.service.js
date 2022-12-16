@@ -7,13 +7,13 @@ import { getErrorMessage } from "../../utils/getErrorMessage"
 export const tableApi = createApi({
     reducerPath: "tableApi",
     baseQuery: fetchBaseUrl,
-    tagTypes: ["Table"],
+    tagTypes: ["Table", "RestaurantId"],
     endpoints: (builder) => ({
         getTables: builder.query({
             query: () => ({
                 url: "tables",
             }),
-            providesTags: ["Table"],
+            providesTags: ["Table", "RestaurantId"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

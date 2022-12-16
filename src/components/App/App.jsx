@@ -1,5 +1,4 @@
 import { Suspense, useEffect } from 'react';
-import axios from 'axios';
 import { Switch, Redirect } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -9,13 +8,17 @@ import { useEventTags } from '../../hooks';
 import routes from '../../config/routes';
 import urls from '../../config/urls';
 import { PrivateRoute, PublicRoute, Loader } from '../';
-import { hotelOperations, hotelSelectors } from '../../redux/hotel';
 import { echo } from '../../config/echo';
 import { getIsAuthenticated } from '../../redux/features/auth-slice';
 import { orderApi } from '../../redux/services/order.service';
 import { authSlice } from '../../redux/features';
 import { useGetUserQuery } from '../../redux/services/auth.service';
 import { getLocaleSelector } from '../../redux/features/localization-slice';
+import {
+  useGetRestaurantByIdQuery,
+  useEditRestaurantMutation,
+} from '../../redux/services/restaurant.service';
+import { getRestSelector } from '../../redux/features/rest-slice';
 
 const { getUserSelector } = authSlice;
 
@@ -23,36 +26,32 @@ export default function App() {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
 
-  const { dispatchsEvent } = useEventTags();
+  const { dispatchsEvent, dispatchRestIdEvent } = useEventTags();
 
   const user = useSelector(getUserSelector);
   const isAuth = useSelector(getIsAuthenticated);
-  const hotel = useSelector(hotelSelectors.getHotel);
+  const rest = useSelector(getRestSelector);
   const locale = useSelector(getLocaleSelector);
 
   //GetUser
   useGetUserQuery(null, { skip: !isAuth });
 
-  useEffect(() => {
-    if (!user || user.role !== 'super-admin') {
-      return;
+  //GetRestlById
+  const { data: dataRest } = useGetRestaurantByIdQuery(
+    rest?.id ? rest.id : user?.restaurant_id,
+    {
+      skip: !user || user.role !== 'super-admin',
     }
+  );
 
-    const hotelId = user.restaurant_id;
-    dispatch(hotelOperations.getHotelById(hotelId));
-  }, [dispatch, i18n.language, user]);
-
-  useEffect(() => {
-    if (!hotel) return;
-
-    axios.defaults.headers.restaurant = hotel.id;
-  }, [hotel]);
+  //UodateMutationAPiRest
+  const [updateRestMutation] = useEditRestaurantMutation();
 
   // Set initial settings state
   useEffect(() => {
-    if (!hotel || !user || user.role !== 'super-admin') return;
+    if (!dataRest || !user || user.role !== 'super-admin') return;
 
-    const hasSettings = hotel.settings !== null;
+    const hasSettings = dataRest.settings !== null;
     if (!hasSettings) {
       setInitialSettings();
       return;
@@ -75,7 +74,7 @@ export default function App() {
       'callWaiter',
     ];
     for (const key of settingsKeys) {
-      if (!Object.keys(hotel.settings).includes(key)) {
+      if (!Object.keys(dataRest.settings).includes(key)) {
         hasAllKeys = false;
         break;
       }
@@ -85,13 +84,14 @@ export default function App() {
       setInitialSettings();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hotel, dispatch]);
+  }, [dataRest, dispatch]);
 
   function setInitialSettings() {
-    dispatch(
-      hotelOperations.updateHotel(hotel.id, {
-        name: hotel.name,
-        address: hotel.address,
+    updateRestMutation({
+      restId: dataRest.id,
+      params: {
+        name: dataRest.name,
+        address: dataRest.address,
         settings: {
           review: true,
           email: true,
@@ -108,10 +108,19 @@ export default function App() {
           callWaiter: true,
           theme: 'green',
         },
-      })
-    );
+      },
+    });
   }
 
+  useEffect(() => {
+    if (rest?.id === undefined) return;
+
+    dispatchRestIdEvent();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rest]);
+
+  // Refetch Apis for Locales
   useEffect(() => {
     const persistedLanguage = locale;
     if (!persistedLanguage) return;
@@ -125,10 +134,12 @@ export default function App() {
   useEffect(() => {
     if (!user) return;
 
-    const hotelId =
-      user.role === 'super-admin' && hotel ? hotel.id : user.restaurant_id;
+    const restId =
+      user.role === 'super-admin' && dataRest
+        ? dataRest.id
+        : user.restaurant_id;
 
-    echo.channel(`restaurants.${hotelId}`).listen('OrderCreated', (e) => {
+    echo.channel(`restaurants.${restId}`).listen('OrderCreated', (e) => {
       toast('New order arrived');
       dispatch(
         orderApi.endpoints.getOrders.initiate(null, { forceRefetch: true })
@@ -136,9 +147,9 @@ export default function App() {
     });
 
     return () => {
-      echo.channel(`restaurants.${hotelId}`).stopListening('OrderCreated');
+      echo.channel(`restaurants.${restId}`).stopListening('OrderCreated');
     };
-  }, [dispatch, user, hotel]);
+  }, [dispatch, user, dataRest]);
 
   return (
     <Suspense fallback={<Loader centered />}>

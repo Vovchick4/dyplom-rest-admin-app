@@ -12,10 +12,10 @@ import Settings from './Settings';
 import User from './User';
 import { NotFoundItems, Dropdown } from '../';
 import { ordersSelectors } from '../../redux/orders';
-import { hotelSelectors } from '../../redux/hotel';
 import urls from '../../config/urls';
 import { getUserSelector } from '../../redux/features/auth-slice';
 import { setLocale } from '../../redux/features/localization-slice';
+import { getRestSelector } from '../../redux/features/rest-slice';
 
 export default function Navbar({ onOpenSidebar }) {
   const { t, i18n } = useTranslation();
@@ -24,7 +24,7 @@ export default function Navbar({ onOpenSidebar }) {
 
   const dispatch = useDispatch();
   const user = useSelector(getUserSelector);
-  const hotel = useSelector(hotelSelectors.getHotel);
+  const rest = useSelector(getRestSelector);
   const newOrdersCount = useSelector(ordersSelectors.getNewOrdersCount);
 
   function openDropdown() {
@@ -52,8 +52,8 @@ export default function Navbar({ onOpenSidebar }) {
                 <span>{t('Hi')}, </span>
                 {location.pathname === urls.hotelList
                   ? user.name
-                  : user.role === 'super-admin' && hotel
-                  ? hotel.name
+                  : user.role === 'super-admin' && rest
+                  ? rest.name
                   : user.restaurant_slug}
               </span>
               <div className={styles.links}>

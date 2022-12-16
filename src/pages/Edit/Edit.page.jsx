@@ -1,13 +1,15 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 
 import Card from './Card';
 import { Input, Layout, PageHeader } from '../../components';
 import styles from './Edit.module.css';
-import { hotelSelectors, hotelOperations } from '../../redux/hotel';
+import { useEditRestaurantMutation } from '../../redux/services/restaurant.service';
+import { getRestSelector } from '../../redux/features/rest-slice';
 
-function Edit() {
+export default function Edit() {
+  const [restUpdateMutator] = useEditRestaurantMutation();
   const [categorySettings, setCategorySettings] = useState({
     kitchen: true,
     cashier: true,
@@ -15,22 +17,20 @@ function Edit() {
   });
 
   const { t } = useTranslation();
-
-  const dispatch = useDispatch();
-
-  const hotel = useSelector(hotelSelectors.getHotel);
+  const restaurant = useSelector(getRestSelector);
 
   function updateSettings(e) {
-    dispatch(
-      hotelOperations.updateHotel(hotel.id, {
-        name: hotel.name,
-        address: hotel.address,
+    restUpdateMutator({
+      restId: restaurant.id,
+      params: {
+        name: restaurant.name,
+        address: restaurant.address,
         settings: {
-          ...hotel.settings,
+          ...restaurant.settings,
           [e.target.name]: e.target.checked,
         },
-      })
-    );
+      },
+    });
   }
 
   function updateCategory(e) {
@@ -59,50 +59,53 @@ function Edit() {
         break;
     }
 
-    dispatch(
-      hotelOperations.updateHotel(hotel.id, {
-        name: hotel.name,
-        address: hotel.address,
+    restUpdateMutator({
+      restId: restaurant.id,
+      params: {
+        name: restaurant.name,
+        address: restaurant.address,
         settings: {
-          ...hotel.settings,
+          ...restaurant.settings,
           ...newSettings,
         },
-      })
-    );
+      },
+    });
   }
 
   function updateTheme(value) {
-    dispatch(
-      hotelOperations.updateHotel(hotel.id, {
-        name: hotel.name,
-        address: hotel.address,
+    restUpdateMutator({
+      restId: restaurant.id,
+      params: {
+        name: restaurant.name,
+        address: restaurant.address,
         settings: {
-          ...hotel.settings,
+          ...restaurant.settings,
           theme: value,
         },
-      })
-    );
+      },
+    });
   }
 
   useEffect(() => {
-    if (!hotel?.settings) return;
+    if (!restaurant?.settings) return;
 
     setCategorySettings({
-      kitchen: hotel.settings.onSite || hotel.settings.clickAndCollect,
+      kitchen:
+        restaurant.settings.onSite || restaurant.settings.clickAndCollect,
       cashier:
-        hotel.settings.cashPayment ||
-        hotel.settings.onlinePayment ||
-        hotel.settings.paypal ||
-        hotel.settings.appleGooglePay,
-      waiter: hotel.settings.billRequest || hotel.settings.callWaiter,
+        restaurant.settings.cashPayment ||
+        restaurant.settings.onlinePayment ||
+        restaurant.settings.paypal ||
+        restaurant.settings.appleGooglePay,
+      waiter: restaurant.settings.billRequest || restaurant.settings.callWaiter,
     });
-  }, [hotel]);
+  }, [restaurant]);
 
   return (
     <Layout>
       <PageHeader title={t('Edit hotel section')} />
 
-      {hotel && (
+      {restaurant && (
         <div className={styles.grid}>
           <Card
             title={t('Dashboard')}
@@ -111,21 +114,21 @@ function Edit() {
                 key: 'review',
                 label: t('Review (rating)'),
                 name: 'review',
-                checked: hotel.settings.review,
+                checked: restaurant.settings.review,
                 onChange: updateSettings,
               },
               {
                 key: 'email',
                 label: t('Email'),
                 name: 'email',
-                checked: hotel.settings.email,
+                checked: restaurant.settings.email,
                 onChange: updateSettings,
               },
               {
                 key: 'supplier',
                 label: t('Supplier'),
                 name: 'supplier',
-                checked: hotel.settings.supplier,
+                checked: restaurant.settings.supplier,
                 onChange: updateSettings,
               },
             ]}
@@ -142,14 +145,14 @@ function Edit() {
                 key: 'onSite',
                 label: t('On-site'),
                 name: 'onSite',
-                checked: hotel.settings.onSite,
+                checked: restaurant.settings.onSite,
                 onChange: updateSettings,
               },
               {
                 key: 'clickAndCollect',
                 label: t('Click&collect'),
                 name: 'clickAndCollect',
-                checked: hotel.settings.clickAndCollect,
+                checked: restaurant.settings.clickAndCollect,
                 onChange: updateSettings,
               },
             ]}
@@ -166,28 +169,28 @@ function Edit() {
                 key: 'cashPayment',
                 label: t('Payment by cash'),
                 name: 'cashPayment',
-                checked: hotel.settings.cashPayment,
+                checked: restaurant.settings.cashPayment,
                 onChange: updateSettings,
               },
               {
                 key: 'onlinePayment',
                 label: t('Payment online'),
                 name: 'onlinePayment',
-                checked: hotel.settings.onlinePayment,
+                checked: restaurant.settings.onlinePayment,
                 onChange: updateSettings,
               },
               {
                 key: 'paypal',
                 label: t('Paypal'),
                 name: 'paypal',
-                checked: hotel.settings.paypal,
+                checked: restaurant.settings.paypal,
                 onChange: updateSettings,
               },
               {
                 key: 'appleGooglePay',
                 label: t('ApplePay / GooglePay'),
                 name: 'appleGooglePay',
-                checked: hotel.settings.appleGooglePay,
+                checked: restaurant.settings.appleGooglePay,
                 onChange: updateSettings,
               },
             ]}
@@ -204,14 +207,14 @@ function Edit() {
                 key: 'billRequest',
                 label: t('Bill request'),
                 name: 'billRequest',
-                checked: hotel.settings.billRequest,
+                checked: restaurant.settings.billRequest,
                 onChange: updateSettings,
               },
               {
                 key: 'callWaiter',
                 label: t('Call waiter'),
                 name: 'callWaiter',
-                checked: hotel.settings.callWaiter,
+                checked: restaurant.settings.callWaiter,
                 onChange: updateSettings,
               },
             ]}
@@ -231,7 +234,7 @@ function Edit() {
                 value: 'red',
               },
             ]}
-            value={hotel.settings.theme || 'green'}
+            value={restaurant.settings.theme || 'green'}
             onChange={updateTheme}
           />
         </div>
@@ -239,5 +242,3 @@ function Edit() {
     </Layout>
   );
 }
-
-export default Edit;

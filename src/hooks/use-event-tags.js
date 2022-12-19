@@ -1,11 +1,11 @@
 import { useDispatch } from "react-redux";
 import { orderApi } from "../redux/services/order.service";
 import { plateApi } from "../redux/services/plate.service";
-import { restaruantApi } from "../redux/services/restaurant.service";
+// import { restaruantApi } from "../redux/services/restaurant.service";
 import { tableApi } from "../redux/services/table.service";
 
 const fixtures = [plateApi]
-const fixturesRest = [plateApi, orderApi, tableApi, restaruantApi]
+const fixturesRest = [plateApi, orderApi, tableApi]
 export function useEventTags() {
     const dispatch = useDispatch();
 

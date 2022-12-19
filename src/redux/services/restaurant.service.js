@@ -8,7 +8,7 @@ import { setRest } from "../features/rest-slice"
 export const restaruantApi = createApi({
     reducerPath: "restaruantApi",
     baseQuery: fetchBaseUrl,
-    tagTypes: ["Restaurant", "Locales"],
+    tagTypes: ["Restaurant", "UpdateRestId", "Locales"],
     endpoints: (builder) => ({
         getRestaurants: builder.query({
             query: ({ page, searchText }) => {
@@ -45,6 +45,7 @@ export const restaruantApi = createApi({
             query: (restId) => ({
                 url: `restaurants/${restId}`,
             }),
+            providesTags: ["UpdateRestId"],
             transformResponse: (res) => res.data,
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
@@ -89,7 +90,7 @@ export const restaruantApi = createApi({
                 url: `restaurants/${restId}`,
                 body: { _method: "PATCH", ...params }
             }),
-            invalidatesTags: ["Restaurant"],
+            invalidatesTags: ["Restaurant", "UpdateRestId"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

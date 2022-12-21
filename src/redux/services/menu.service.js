@@ -24,6 +24,50 @@ export const menuApi = createApi({
                 }
             }
         })),
+        getMenuById: builder.query(({
+            query: (sectionId) => ({
+                method: "GET",
+                url: `/categories/${sectionId}`
+            }),
+            transformResponse: (res) => res.data,
+            providesTags: ["Menu", "Locales"],
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        })),
+        getPlateListSync: builder.query(({
+            query: (sectionId) => ({
+                method: "GET",
+                url: `/categories/${sectionId}/plates-list`,
+            }),
+            invalidatesTags: ["Menu"],
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        })),
+        plateSync: builder.mutation(({
+            query: ({ sectionId, plates }) => ({
+                method: "POST",
+                url: `/categories/${sectionId}/plates-sync`,
+                body: { plate_ids: plates }
+            }),
+            invalidatesTags: ["Menu"],
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        })),
         createMenu: builder.mutation(({
             query: (data) => ({
                 method: "POST",
@@ -73,7 +117,8 @@ export const menuApi = createApi({
 })
 
 // Exports Hooks
-export const { useGetMenuQuery, useCreateMenuMutation, useEditMenuMutation, useDeleteMenuMutations } = menuApi
+export const { useGetMenuQuery, useGetMenuByIdQuery, useGetPlateListSyncQuery,
+    usePlateSyncMutation, useCreateMenuMutation, useEditMenuMutation, useDeleteMenuMutations } = menuApi
 
 // Export reducer
 export const menuServiceReducer = menuApi.reducer

@@ -168,7 +168,7 @@ export default function PlatesPage() {
         </div>
       )}
 
-      {plates?.data?.length > 9 && (
+      {plates?.meta?.last_page > 1 && (
         <div className={styles.pagination}>
           <Pagination
             currentPage={currentPage}

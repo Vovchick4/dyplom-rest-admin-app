@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { DebounceInput } from 'react-debounce-input';
 
@@ -17,7 +15,6 @@ import {
 } from '../../../../components';
 import styles from './SectionName.module.css';
 import placeholderImage from '../../../../images/placeholder.jpg';
-import { getErrorMessage } from '../../../../utils/getErrorMessage';
 import { translationTimeout } from '../../../../constants/translationTimeout';
 import { useGoogleTranslate } from '../../../../hooks';
 
@@ -36,13 +33,7 @@ const validationSchema = Yup.object().shape({
 
 const reader = new FileReader();
 
-export default function SectionName({
-  sectionId,
-  loading,
-  setLoading,
-  onSubmit,
-  onCancel,
-}) {
+export default function SectionName({ section, loading, onSubmit, onCancel }) {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(placeholderImage);
 
@@ -83,25 +74,14 @@ export default function SectionName({
   });
 
   useEffect(() => {
-    setLoading(true);
-
-    axios({
-      url: `/categories/${sectionId}`,
-      method: 'GET',
-    })
-      .then((res) => {
-        const sectionData = res.data.data;
-        setImagePreview(sectionData.image);
-
-        formik.setValues({
-          'name:en': sectionData['name:en'],
-          'name:fr': sectionData['name:fr'],
-        });
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setLoading(false));
+    if (!section) return;
+    setImagePreview(section.image);
+    formik.setValues({
+      'name:en': section['name:en'],
+      'name:fr': section['name:fr'],
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [section]);
 
   const { translate, lastEditedInputRef, translationLoading } =
     useGoogleTranslate(formik);

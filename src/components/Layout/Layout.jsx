@@ -20,7 +20,7 @@ export default function Layout({ children }) {
       <Navbar onOpenSidebar={openSidebar} />
 
       <div className={styles.container}>
-        <div className={styles.content}>
+        <div id="scrollId" className={styles.content}>
           <div className={styles.scrollable}>
             <Container>{children}</Container>
           </div>

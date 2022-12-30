@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { usePlateSyncMutation } from '../../../redux/services/menu.service';
 
-import { getErrorMessage } from '../../../utils/getErrorMessage';
 import SectionName from './SectionName';
 import SelectPlates from './SelectPlates';
 
@@ -11,44 +9,27 @@ const Pages = {
   AddPlates: 'ADD_PLATES',
 };
 
-export default function AddSection({
-  loading,
-  setLoading,
-  onSubmit,
-  onCancel,
-}) {
+export default function AddSection({ loading, createMenuMutator, onCancel }) {
+  const [plateSyncUpdateMutator] = usePlateSyncMutation();
+
   const [activePage, setActivePage] = useState(Pages.SetName);
   const [section, setSection] = useState(null);
 
   function handleSectionNameSubmit(formData) {
-    setLoading(true);
-
-    axios({
-      url: '/categories',
-      method: 'POST',
-      data: formData,
-    })
+    createMenuMutator(formData)
+      .unwrap()
       .then((res) => {
-        setSection(res.data.data);
+        setSection(res.data);
         setActivePage(Pages.AddPlates);
       })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function handleSelectPlatesSubmit(plates) {
-    setLoading(true);
-
-    axios({
-      url: `/categories/${section.id}/plates-sync`,
-      method: 'POST',
-      data: {
-        plate_ids: plates,
-      },
-    })
-      .then(() => onSubmit(section))
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setLoading(false));
+    plateSyncUpdateMutator({ sectionId: section.id, plates });
+    onCancel();
   }
 
   return (
@@ -64,8 +45,6 @@ export default function AddSection({
       {activePage === Pages.AddPlates && section && (
         <SelectPlates
           section={section}
-          loading={loading}
-          setLoading={setLoading}
           onSubmit={handleSelectPlatesSubmit}
           onCancel={onCancel}
         />

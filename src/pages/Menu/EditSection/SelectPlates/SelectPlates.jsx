@@ -1,21 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 
 import styles from './SelectPlates.module.css';
 import { Checkbox, Button, Modal, Loader } from '../../../../components';
-import { getErrorMessage } from '../../../../utils/getErrorMessage';
+import { useGetPlateListSyncQuery } from '../../../../redux/services/menu.service';
 
 const validationSchema = Yup.object().shape({
   plates: Yup.array(Yup.string()),
 });
 
-export default function SelectPlates({ section, loading, onSubmit, onCancel }) {
-  const [plates, setPlates] = useState([]);
-  const [platesLoading, setPlatesLoading] = useState(false);
+export default function SelectPlates({ section, onSubmit, onCancel }) {
+  const { data: plates, isLoading: loading } = useGetPlateListSyncQuery(
+    section?.id
+  );
 
   const { t } = useTranslation();
 
@@ -31,32 +30,18 @@ export default function SelectPlates({ section, loading, onSubmit, onCancel }) {
   });
 
   useEffect(() => {
-    if (!section) return;
-
-    setPlatesLoading(true);
-
-    axios({
-      url: `/categories/${section.id}/plates-list`,
-      method: 'GET',
-    })
-      .then((res) => {
-        setPlates(res.data.data);
-        const selectedPlates = res.data.data.filter(
-          (plate) => plate.category_id === section.id
-        );
-        const selectedPlatesIds = selectedPlates.map((plate) =>
-          plate.id.toString()
-        );
-        formik.setValues({
-          plates: selectedPlatesIds,
-        });
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setPlatesLoading(false));
+    if (!plates) return;
+    const selectedPlates = plates.filter((plate) =>
+      plate.category_id.includes(section.id)
+    );
+    const selectedPlatesIds = selectedPlates.map((plate) =>
+      plate.id.toString()
+    );
+    formik.setValues({
+      plates: selectedPlatesIds,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [section]);
-
-  console.log(formik.values);
+  }, [plates]);
 
   return (
     <div className={styles.platesContainer}>
@@ -67,13 +52,13 @@ export default function SelectPlates({ section, loading, onSubmit, onCancel }) {
 
       <form onSubmit={formik.handleSubmit}>
         <div>
-          {platesLoading && (
+          {loading && (
             <div className={styles.loader}>
               <Loader centered />
             </div>
           )}
 
-          {plates.length > 0 && !platesLoading && (
+          {plates?.length > 0 && !loading && (
             <div className={styles.platesGrid}>
               {plates.map((plate, index) => (
                 <Checkbox
@@ -101,11 +86,7 @@ export default function SelectPlates({ section, loading, onSubmit, onCancel }) {
         </div>
 
         <div className={styles.platesApplyBox}>
-          <Button
-            type="submit"
-            disabled={platesLoading || loading}
-            loading={loading}
-          >
+          <Button type="submit" disabled={loading} loading={loading}>
             <span className={styles.submitText}>{t('Save')}</span>
           </Button>
         </div>

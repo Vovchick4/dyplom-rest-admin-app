@@ -7,15 +7,17 @@ import { fetchBaseUrl } from './helpers'
 export const menuApi = createApi({
     reducerPath: 'menuApi',
     baseQuery: fetchBaseUrl,
-    tagTypes: ['Menu', "Locales"],
+    tagTypes: ['Menu', "PlateSync", "Locales", "RestaurantId"],
     endpoints: (builder) => ({
         getMenu: builder.query(({
-            query: () => ({
+            query: (page) => ({
                 method: "GET",
-                url: "/categories"
+                url: "/categories",
+                params: {
+                    page
+                }
             }),
-            transformResponse: (res) => res.data,
-            providesTags: ["Menu", "Locales"],
+            providesTags: ["Menu", "Locales", "RestaurantId"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -44,7 +46,8 @@ export const menuApi = createApi({
                 method: "GET",
                 url: `/categories/${sectionId}/plates-list`,
             }),
-            invalidatesTags: ["Menu"],
+            transformResponse: (res) => res.data,
+            providesTags: ["Menu", "PlateSync"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -59,7 +62,7 @@ export const menuApi = createApi({
                 url: `/categories/${sectionId}/plates-sync`,
                 body: { plate_ids: plates }
             }),
-            invalidatesTags: ["Menu"],
+            invalidatesTags: ["Menu", "PlateSync"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -89,7 +92,7 @@ export const menuApi = createApi({
                 url: `/categories/${sectionId}`,
                 body: data
             }),
-            invalidatesTags: ["Menu"],
+            invalidatesTags: ["Menu", "PlateSync"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -118,7 +121,7 @@ export const menuApi = createApi({
 
 // Exports Hooks
 export const { useGetMenuQuery, useGetMenuByIdQuery, useGetPlateListSyncQuery,
-    usePlateSyncMutation, useCreateMenuMutation, useEditMenuMutation, useDeleteMenuMutations } = menuApi
+    usePlateSyncMutation, useCreateMenuMutation, useEditMenuMutation, useDeleteMenuMutation } = menuApi
 
 // Export reducer
 export const menuServiceReducer = menuApi.reducer

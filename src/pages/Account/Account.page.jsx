@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Calendar from 'react-calendar';
 import { useTranslation } from 'react-i18next';
 
@@ -6,8 +6,8 @@ import InvoiceCard from '../Account/InvoiceCard';
 
 import styles from './Account.module.css';
 import '../../styles/calendar.css';
-import { Layout, PageHeader } from '../../components';
-import { invoices } from './invoices';
+import { Layout, Loader, PageHeader } from '../../components';
+import { useGetInvoicesOrderQuery } from '../../redux/services/order.service';
 
 export default function AccountPage() {
   const [selectedDate, setSelectedDate] = useState([
@@ -21,18 +21,39 @@ export default function AccountPage() {
     ),
     new Date(new Date().setHours(23, 59, 59, 999)),
   ]);
-  const [currInvoices, setCurrInvoices] = useState([]);
+  const { data: currInvoices, isFetching } = useGetInvoicesOrderQuery({
+    first_date: selectedDate[0].toISOString(),
+    second_date: selectedDate[1].toISOString(),
+  });
+
   const { t, i18n } = useTranslation();
 
-  useEffect(() => {
-    setCurrInvoices(
-      invoices.filter(
-        (item) =>
-          new Date(item.date) >= selectedDate[0] &&
-          new Date(item.date) <= selectedDate[1]
-      )
+  function downloadTxtFile(data, plates) {
+    const fillData = Object.keys(data).flatMap(
+      (element) => element + ' - ' + data[element] + '\n'
     );
-  }, [selectedDate]);
+    const fillPlates = plates.map(
+      ({ id, name, description, price, quantity, restaurant_id }) =>
+        'Plates:\nid - ' +
+        id +
+        '\nname - ' +
+        name +
+        '\ndescription - ' +
+        description +
+        '\nprice - ' +
+        price +
+        '\nquantity - ' +
+        quantity +
+        '\nrestaurant_id - ' +
+        restaurant_id
+    );
+    const blob = new Blob(fillData.concat(fillPlates), { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'invoice-info.txt';
+    link.href = url;
+    link.click();
+  }
 
   return (
     <Layout>
@@ -43,9 +64,13 @@ export default function AccountPage() {
           <p className={styles.contentTitle}>{t('INVOICES')}</p>
 
           <div className={styles.invoices_content}>
-            {currInvoices.length > 0
+            {!isFetching && currInvoices && currInvoices.length > 0
               ? currInvoices.map((item) => (
-                  <InvoiceCard key={item.id} {...item} />
+                  <InvoiceCard
+                    key={item.id}
+                    downloadTxtFile={downloadTxtFile}
+                    {...item}
+                  />
                 ))
               : t('There is no such record')}
           </div>
@@ -53,7 +78,9 @@ export default function AccountPage() {
 
         <div className={styles.calendarCard}>
           <div className={styles.calendarContainer}>
-            <h2 className={styles.calendarTitle}>{t('Choose Date')}</h2>
+            <h2 className={styles.calendarTitle}>
+              {t('Choose Date')} {isFetching && <Loader size={3} />}
+            </h2>
             <Calendar
               value={selectedDate}
               onChange={setSelectedDate}

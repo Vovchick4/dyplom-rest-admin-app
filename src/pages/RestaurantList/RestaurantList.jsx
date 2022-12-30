@@ -196,7 +196,7 @@ export default function RestaurantList() {
         </div>
       )}
 
-      {restaurants && !searchText && (
+      {restaurants?.meta?.last_page && !searchText && (
         <div className={styles.pagination}>
           <p className={styles.paginationText}>
             Showing {currentPage + 1} out of {restaurants?.meta.last_page}{' '}

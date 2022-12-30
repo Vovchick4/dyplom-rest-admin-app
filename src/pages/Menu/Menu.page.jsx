@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { IoMdAdd } from 'react-icons/io';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 
 import styles from './Menu.module.css';
@@ -16,7 +14,13 @@ import {
 import MenuCard from './MenuCard';
 import AddSection from './AddSection';
 import EditSection from './EditSection';
-import { getErrorMessage } from '../../utils/getErrorMessage';
+import {
+  useGetMenuQuery,
+  useDeleteMenuMutation,
+  useEditMenuMutation,
+  useCreateMenuMutation,
+} from '../../redux/services/menu.service';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const MenuModals = {
   add: 'ADD_SECTION',
@@ -24,27 +28,25 @@ const MenuModals = {
 };
 
 export default function MenuPage() {
-  const [sections, setSections] = useState([]);
-  const [sectionsLoading, setSectionsLoading] = useState(false);
+  const [infiniteData, setInfiniteData] = useState([]);
+  const [page, setPage] = useState(0);
+  const { data: sections, isLoading: sectionsLoading } = useGetMenuQuery(
+    page + 1
+  );
+  const [createMenuMutator, { isLoading: createSectionLoading }] =
+    useCreateMenuMutation();
+  const [updateMenuMutator] = useEditMenuMutation();
+  const [deleteMenuMutator] = useDeleteMenuMutation();
+
   const [activeModal, setActiveModal] = useState(null);
   const [editSectionId, setEditSectionId] = useState(null);
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    setSectionsLoading(true);
-
-    axios({
-      url: '/categories',
-      method: 'GET',
-      // headers: {
-      //   restaurant: restaurant_id,
-      // },
-    })
-      .then((res) => setSections(res.data.data))
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setSectionsLoading(false));
-  }, [i18n.language]);
+    if (!sections) return;
+    setInfiniteData((prev) => [...prev, ...sections.data]);
+  }, [sections]);
 
   function openAddModal() {
     setActiveModal(MenuModals.add);
@@ -56,78 +58,28 @@ export default function MenuPage() {
   }
 
   function closeModal() {
-    setEditSectionId(null);
     setActiveModal(null);
-  }
-
-  function handleAddSectionSubmit(section) {
-    closeModal();
-    setSections((prev) => [...prev, section]);
-  }
-
-  function handleSectionNameChanged(section) {
-    setSections((prev) =>
-      prev.map((sectionItem) =>
-        sectionItem.id === section.id ? section : sectionItem
-      )
-    );
-  }
-
-  function handleEditSectionSubmit(section) {
-    closeModal();
-    setSections((prev) =>
-      prev.map((sectionItem) =>
-        sectionItem.id === section.id ? section : sectionItem
-      )
-    );
+    setEditSectionId(null);
   }
 
   function deleteSection(sectionId) {
     if (!window.confirm(t('Confirm deleting the plate'))) return;
-
-    setSectionsLoading(true);
-
-    axios({
-      url: `/categories/${sectionId}`,
-      method: 'DELETE',
-    })
-      .then(() =>
-        setSections((prev) => prev.filter(({ id }) => sectionId !== id))
-      )
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setSectionsLoading(false));
+    deleteMenuMutator(sectionId);
   }
 
   function toggleSectionActive(sectionId, active) {
-    setSectionsLoading(true);
-
     const formData = new FormData();
     formData.append('active', Number(active));
     formData.append('_method', 'PATCH');
-
-    axios({
-      url: `/categories/${sectionId}`,
-      method: 'POST',
-      data: formData,
-    })
-      .then((res) => {
-        setSections((prev) =>
-          prev.map((sectionItem) =>
-            sectionItem.id === sectionId ? res.data.data : sectionItem
-          )
-        );
-      })
-      .catch((error) => toast.error(getErrorMessage(error)))
-      .finally(() => setSectionsLoading(false));
+    updateMenuMutator({ sectionId, data: formData });
   }
 
   return (
     <Layout>
       <Modal visible={activeModal === MenuModals.add} onClose={closeModal}>
         <AddSection
-          loading={sectionsLoading}
-          setLoading={setSectionsLoading}
-          onSubmit={handleAddSectionSubmit}
+          loading={createSectionLoading}
+          createMenuMutator={createMenuMutator}
           onCancel={closeModal}
         />
       </Modal>
@@ -138,10 +90,7 @@ export default function MenuPage() {
       >
         <EditSection
           sectionId={editSectionId}
-          loading={sectionsLoading}
-          setLoading={setSectionsLoading}
-          onNameChanged={handleSectionNameChanged}
-          onSubmit={handleEditSectionSubmit}
+          updateSection={updateMenuMutator}
           onCancel={closeModal}
         />
       </Modal>
@@ -159,27 +108,38 @@ export default function MenuPage() {
         }
       />
 
-      {sectionsLoading && (
-        <div className={styles.loader}>
-          <Loader centered />
-        </div>
+      {infiniteData.length > 0 && (
+        <InfiniteScroll
+          style={{ overflow: 'hidden' }}
+          dataLength={sections.meta.total}
+          next={() =>
+            sections.meta.total !== infiniteData.length &&
+            setPage((prev) => prev + 1)
+          }
+          hasMore={
+            sections.meta.total > 20 ||
+            sections.meta.total === infiniteData.length
+          }
+          loader={
+            sections.meta.total !== infiniteData.length && <Loader centered />
+          }
+          scrollableTarget={'scrollId'}
+        >
+          <div className={styles.grid_content}>
+            {infiniteData.map((section) => (
+              <MenuCard
+                key={section.id}
+                {...section}
+                onEdit={openEditModal}
+                onDelete={deleteSection}
+                onToggleActive={toggleSectionActive}
+              />
+            ))}
+          </div>
+        </InfiniteScroll>
       )}
 
-      {sections.length > 0 && !sectionsLoading && (
-        <div className={styles.grid_content}>
-          {sections.map((section) => (
-            <MenuCard
-              key={section.id}
-              {...section}
-              onEdit={openEditModal}
-              onDelete={deleteSection}
-              onToggleActive={toggleSectionActive}
-            />
-          ))}
-        </div>
-      )}
-
-      {sections.length === 0 && !sectionsLoading && (
+      {infiniteData.length === 0 && !sectionsLoading && (
         <NotFoundItems title="Haven't menus" />
       )}
     </Layout>

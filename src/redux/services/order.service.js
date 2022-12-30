@@ -22,6 +22,21 @@ export const orderApi = createApi({
                 }
             }
         }),
+        getInvoicesOrder: builder.query({
+            query: (data) => ({
+                url: "orders-invoices",
+                params: data,
+            }),
+            providesTags: ["Order", "RestaurantId"],
+            transformResponse: (res) => res.data,
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        }),
         editOrder: builder.mutation({
             query: ({ orderId, data }) => ({
                 url: `orders/${orderId}`,
@@ -58,7 +73,7 @@ export const orderApi = createApi({
 })
 
 // Exports Hooks
-export const { useGetOrdersQuery, useEditOrderMutation, useRemoveOrderMutation } = orderApi
+export const { useGetOrdersQuery, useGetInvoicesOrderQuery, useEditOrderMutation, useRemoveOrderMutation } = orderApi
 
 // Export reducer
 export const orderServiceReducer = orderApi.reducer

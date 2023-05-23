@@ -32,7 +32,7 @@ export const tableApi = createApi({
                 }, {}) : { waiter: [], bill_request: [], }
                 return formatedData
             }
-        })
+        }),
     })
 })
 

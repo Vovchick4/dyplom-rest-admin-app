@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import SectionName from './SectionName';
 import SelectPlates from './SelectPlates';
+import { Loader } from '../../../components';
 import {
   useGetMenuByIdQuery,
   usePlateSyncMutation,
@@ -16,7 +17,8 @@ export default function EditSection({ sectionId, updateSection, onCancel }) {
   const { data: section, isLoading: loading } = useGetMenuByIdQuery(sectionId, {
     skip: !sectionId,
   });
-  const [plateSyncUpdateMutator] = usePlateSyncMutation();
+  const [plateSyncUpdateMutator, { isLoading: isLoadingUpdating }] =
+    usePlateSyncMutation();
   const [activePage, setActivePage] = useState(Pages.SetName);
 
   function handleSectionNameSubmit(formData) {
@@ -32,10 +34,12 @@ export default function EditSection({ sectionId, updateSection, onCancel }) {
 
   return (
     <div>
+      {isLoadingUpdating && <Loader />}
+
       {activePage === Pages.SetName && (
         <SectionName
           section={section}
-          loading={loading}
+          loading={loading || isLoadingUpdating}
           onSubmit={handleSectionNameSubmit}
           onCancel={onCancel}
         />

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import styles from './Mail.module.css';
+import { useGetRestaurantReviewsQuery } from '../../../redux/services/restaurant.service';
 
 const mas = [
   {
@@ -41,22 +42,29 @@ const mas = [
 ];
 
 export default function Mail() {
+  const { data, isLoading } = useGetRestaurantReviewsQuery();
   const { t } = useTranslation();
 
   return (
     <div className={styles.content}>
-      <h2 className={styles.content_title}>{t('Work email section')}</h2>
+      <h2 className={styles.content_title}>
+        {t('REVIEWS (COMMENTS)')} {isLoading && 'Load....'}{' '}
+        {data?.length === 0 && 'No comments yet!'}
+      </h2>
 
       <div className={styles.content_card}>
-        {mas.map((item) => (
-          <div
-            key={item.id}
-            className={item.id % 2 === 1 ? styles.card : styles.card_grey_mode}
-          >
-            <p className={styles.user_name}>{item.name}</p>
-            <p className={styles.user_text}>{item.text}</p>
-          </div>
-        ))}
+        {data &&
+          data.map((item) => (
+            <div
+              key={item.id}
+              className={
+                item.id % 2 === 1 ? styles.card : styles.card_grey_mode
+              }
+            >
+              <p className={styles.user_name}>{item.review}</p>
+              <p className={styles.user_text}>{item.comment}</p>
+            </div>
+          ))}
       </div>
     </div>
   );

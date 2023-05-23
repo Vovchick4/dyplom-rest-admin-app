@@ -17,7 +17,7 @@ export const menuApi = createApi({
                     page
                 }
             }),
-            providesTags: ["Menu", "Locales", "RestaurantId"],
+            providesTags: ['Menu', 'Locales', 'RestaurantId'],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -32,7 +32,7 @@ export const menuApi = createApi({
                 url: `/categories/${sectionId}`
             }),
             transformResponse: (res) => res.data,
-            providesTags: ["Menu", "Locales"],
+            providesTags: ["Menu"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled
@@ -92,7 +92,7 @@ export const menuApi = createApi({
                 url: `/categories/${sectionId}`,
                 body: data
             }),
-            invalidatesTags: ["Menu", "PlateSync"],
+            invalidatesTags: ["Menu"],
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

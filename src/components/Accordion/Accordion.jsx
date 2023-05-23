@@ -18,14 +18,14 @@ const items = [
   },
 ];
 
-export default function Acardion({ id }) {
+export default function Acardion({ id, price, plates, created_at }) {
   const [open, setOpen] = useState(false);
 
   return (
     <div
       className={styles.item}
       style={{
-        height: open ? `${items.length * 74.8 + 50}px` : undefined,
+        height: open ? `${plates && plates.length * 74.8 + 50}px` : undefined,
       }}
     >
       <div
@@ -49,10 +49,12 @@ export default function Acardion({ id }) {
               <RiArrowDownSLine />
             )}
           </button>
-          <p className={styles.date}>14/05/2021</p>
-          <p className={styles.order}>Order #00269</p>
+          {/* <p className={styles.date}>
+            {String(new Date(created_at).toLocaleDateString())}
+          </p> */}
+          <p className={styles.order}>Order #{id}</p>
         </div>
-        <p className={styles.price}>€284.99</p>
+        <p className={styles.price}>€{price}</p>
       </div>
 
       <div
@@ -60,14 +62,15 @@ export default function Acardion({ id }) {
           open ? styles.description_content_open : styles.description_content
         }
       >
-        {items.map((item) => (
-          <div key={item.id} className={styles.border}>
-            <p>{item.title}</p>
-            <p>x{item.count}</p>
-            <p>€{item.price}</p>
-            <p>€{item.count * item.price}</p>
-          </div>
-        ))}
+        {plates &&
+          plates.map((item) => (
+            <div key={item.id} className={styles.border}>
+              <p>{item.name}</p>
+              <p>x{item.amount}</p>
+              <p>€{item.price}</p>
+              <p>€{item.amount * item.price}</p>
+            </div>
+          ))}
       </div>
     </div>
   );

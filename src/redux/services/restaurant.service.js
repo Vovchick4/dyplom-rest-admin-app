@@ -85,6 +85,20 @@ export const restaruantApi = createApi({
                 }
             }
         }),
+        getRestaurantReviews: builder.query({
+            query: () => ({
+                url: "statistics/restaurant/reviews",
+            }),
+            providesTags: ["RestaurantId"],
+            transformResponse: (res) => res.data,
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        }),
         createRestaurant: builder.mutation({
             query: (data) => ({
                 method: "POST",
@@ -136,7 +150,7 @@ export const restaruantApi = createApi({
 
 // Exports Hooks
 export const { useGetRestaurantsQuery, useGetRestaurantsSearchtextQuery, useGetRestaurantByIdQuery, useGetRestaurantStatsQuery,
-    useGetRestaurantByIdEditQuery, useCreateRestaurantMutation, useEditRestaurantMutation, useRemoveRestaurantMutation } = restaruantApi
+    useGetRestaurantByIdEditQuery, useCreateRestaurantMutation, useEditRestaurantMutation, useRemoveRestaurantMutation, useGetRestaurantReviewsQuery } = restaruantApi
 
 // Export reducer
 export const restaurantServiceReducer = restaruantApi.reducer

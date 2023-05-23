@@ -16,6 +16,7 @@ import urls from '../../config/urls';
 import { getUserSelector } from '../../redux/features/auth-slice';
 import { setLocale } from '../../redux/features/localization-slice';
 import { getRestSelector } from '../../redux/features/rest-slice';
+import { useGetOrdersQuery } from '../../redux/services/order.service';
 
 export default function Navbar({ onOpenSidebar }) {
   const { t, i18n } = useTranslation();
@@ -25,7 +26,8 @@ export default function Navbar({ onOpenSidebar }) {
   const dispatch = useDispatch();
   const user = useSelector(getUserSelector);
   const rest = useSelector(getRestSelector);
-  const newOrdersCount = useSelector(ordersSelectors.getNewOrdersCount);
+  // const newOrdersCount = useSelector(ordersSelectors.getNewOrdersCount);
+  const { data } = useGetOrdersQuery();
 
   function openDropdown() {
     setDropdownVisible(true);
@@ -117,15 +119,22 @@ export default function Navbar({ onOpenSidebar }) {
               <Popup
                 trigger={
                   <button style={{ background: 'none', border: 0 }}>
-                    <Notifications count={newOrdersCount} />
+                    <Notifications
+                      count={
+                        data?.data?.filter(({ status }) => status === 'new')
+                          .length
+                      }
+                    />
                   </button>
                 }
                 position="bottom center"
               >
-                {newOrdersCount === 0 && (
+                {data?.data?.filter(({ status }) => status === 'new')
+                  ?.length === 0 && (
                   <NotFoundItems title={"Haven't order(s)"} size="small" />
                 )}
-                {newOrdersCount !== 0 && <NotFoundItems size="medium" />}
+                {data?.data?.filter(({ status }) => status === 'new')
+                  ?.length !== 0 && <NotFoundItems size="medium" />}
               </Popup>
               <Settings />
               <User />

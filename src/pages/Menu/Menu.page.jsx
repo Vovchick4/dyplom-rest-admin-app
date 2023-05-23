@@ -27,6 +27,19 @@ const MenuModals = {
   edit: 'EDIT_SECTION',
 };
 
+const removeDuplicates = (arr, identifier) => {
+  const uniqueIdentifiers = new Set();
+
+  return arr.filter((obj) => {
+    const value = obj[identifier];
+    if (!uniqueIdentifiers.has(value)) {
+      uniqueIdentifiers.add(value);
+      return true;
+    }
+    return false;
+  });
+};
+
 export default function MenuPage() {
   const [infiniteData, setInfiniteData] = useState([]);
   const [page, setPage] = useState(0);
@@ -35,8 +48,10 @@ export default function MenuPage() {
   );
   const [createMenuMutator, { isLoading: createSectionLoading }] =
     useCreateMenuMutation();
-  const [updateMenuMutator] = useEditMenuMutation();
-  const [deleteMenuMutator] = useDeleteMenuMutation();
+  const [updateMenuMutator, { isLoading: isUpdateDeleting }] =
+    useEditMenuMutation();
+  const [deleteMenuMutator, { isLoading: isLoadingDeleting }] =
+    useDeleteMenuMutation();
 
   const [activeModal, setActiveModal] = useState(null);
   const [editSectionId, setEditSectionId] = useState(null);
@@ -45,7 +60,9 @@ export default function MenuPage() {
 
   useEffect(() => {
     if (!sections) return;
-    setInfiniteData((prev) => [...prev, ...sections.data]);
+    setInfiniteData((prev) =>
+      removeDuplicates([...prev, ...sections.data], 'id')
+    );
   }, [sections]);
 
   function openAddModal() {
@@ -65,6 +82,7 @@ export default function MenuPage() {
   function deleteSection(sectionId) {
     if (!window.confirm(t('Confirm deleting the plate'))) return;
     deleteMenuMutator(sectionId);
+    setInfiniteData((prev) => prev.filter(({ id }) => id !== sectionId));
   }
 
   function toggleSectionActive(sectionId, active) {
@@ -72,6 +90,9 @@ export default function MenuPage() {
     formData.append('active', Number(active));
     formData.append('_method', 'PATCH');
     updateMenuMutator({ sectionId, data: formData });
+    // setInfiniteData((prev) =>
+    //   prev.map((pr) => (pr === sectionId ? { ...pr, active } : { ...pr }))
+    // );
   }
 
   return (
@@ -107,6 +128,8 @@ export default function MenuPage() {
           </Button>
         }
       />
+
+      {(sectionsLoading || isUpdateDeleting || isLoadingDeleting) && <Loader />}
 
       {infiniteData.length > 0 && (
         <InfiniteScroll

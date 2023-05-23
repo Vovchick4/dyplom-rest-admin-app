@@ -56,7 +56,7 @@ export const orderApi = createApi({
             }
         }),
         removeOrder: builder.mutation({
-            query: ({ orderId }) => ({
+            query: (orderId) => ({
                 method: "DELETE",
                 url: `orders/${orderId}`
             }),

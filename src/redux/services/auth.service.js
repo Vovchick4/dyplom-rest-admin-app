@@ -3,6 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import { toast } from 'react-toastify'
 import { getErrorMessage } from '../../utils/getErrorMessage'
 import { logout, setUser, setToken } from '../features/auth-slice'
+import { deleteRest } from '../features/rest-slice'
 import { fetchBaseUrl } from './helpers'
 
 export const authApi = createApi({
@@ -91,6 +92,9 @@ export const authApi = createApi({
                 try {
                     const { data } = await queryFulfilled
                     dispatch(setUser(data.data))
+                    if (data?.data?.role !== 'super-admin') {
+                        dispatch(deleteRest())
+                    }
                     toast.success(data.message)
                 } catch ({ error }) {
                     dispatch(logout())

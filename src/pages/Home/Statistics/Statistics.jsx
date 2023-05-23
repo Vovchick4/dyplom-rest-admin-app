@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import styles from './Statistics.module.css';
 import InfoItem from './InfoItem';
+import { Loader } from '../../../components';
+import { useGetRestaurantStatsQuery } from '../../../redux/services/restaurant.service';
 
 /*
   data: {
@@ -14,8 +16,14 @@ import InfoItem from './InfoItem';
     ...
   }
 */
-export default function Statistics({ data }) {
+export default function Statistics() {
+  const { data } = useGetRestaurantStatsQuery();
+
   const { t } = useTranslation();
+
+  if (data === undefined) {
+    return <Loader />;
+  }
 
   const excellentCount = data.excellent.count.toString().replace('.', ',');
 

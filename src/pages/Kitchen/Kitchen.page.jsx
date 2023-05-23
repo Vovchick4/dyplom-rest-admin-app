@@ -17,7 +17,7 @@ export default function KitchenPage() {
   const { t } = useTranslation();
 
   function editOrder(orderId, data) {
-    editOrderMutation(orderId, data);
+    editOrderMutation({ orderId, data });
   }
 
   function deleteOrder(orderId) {
@@ -52,11 +52,11 @@ export default function KitchenPage() {
               </div>
             )}
           </div> */}
-          {data.length > 0 ? (
+          {data.data.length > 0 ? (
             <div>
               <p className={styles.title}>{t('TAKE AWAY')}</p>
               <div className={styles.card}>
-                {data.map((order) => (
+                {data.data.map((order) => (
                   <KitchenCard
                     key={order.id}
                     {...order}

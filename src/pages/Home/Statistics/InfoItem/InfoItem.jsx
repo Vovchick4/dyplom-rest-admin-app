@@ -1,3 +1,4 @@
+import { Fragment, useMemo } from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import { MdArrowDropUp, MdArrowDropDown } from 'react-icons/md';
 
@@ -13,6 +14,45 @@ function InfoItem({ status, label, count, percentage, percentageAlt, up }) {
   const formattedStatus = status[0].toUpperCase() + status.slice(1);
   const formattedCount = count.toString().replace('.', ',');
 
+  const reviews = useMemo(
+    () => ({
+      excellent: (
+        <Fragment>
+          {[1, 2, 3, 4, 5].map((u) => (
+            <BsStarFill key={u} className={styles.star} />
+          ))}
+        </Fragment>
+      ),
+      good: (
+        <Fragment>
+          {[1, 2, 3, 4].map((u) => (
+            <BsStarFill key={u} className={styles.star} />
+          ))}
+        </Fragment>
+      ),
+      satisfactory: (
+        <Fragment>
+          {[1, 2, 3].map((u) => (
+            <BsStarFill key={u} className={styles.star} />
+          ))}
+        </Fragment>
+      ),
+      poor: (
+        <Fragment>
+          {[1, 2].map((u) => (
+            <BsStarFill key={u} className={styles.star} />
+          ))}
+        </Fragment>
+      ),
+      bad: (
+        <Fragment>
+          <BsStarFill className={styles.star} />
+        </Fragment>
+      ),
+    }),
+    []
+  );
+
   return (
     <div className={styles.container}>
       <div className={styles[`status${formattedStatus}`]} />
@@ -20,43 +60,7 @@ function InfoItem({ status, label, count, percentage, percentageAlt, up }) {
         <h4 className={styles.name}>
           {label} ({formattedCount})
         </h4>
-        <div className={styles.stars}>
-          {status === 'excellent' && (
-            <>
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-            </>
-          )}
-          {status === 'good' && (
-            <>
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-            </>
-          )}
-          {status === 'satisfactory' && (
-            <>
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-            </>
-          )}
-          {status === 'poor' && (
-            <>
-              <BsStarFill className={styles.star} />
-              <BsStarFill className={styles.star} />
-            </>
-          )}
-          {status === 'bad' && (
-            <>
-              <BsStarFill className={styles.star} />
-            </>
-          )}
-        </div>
+        <div className={styles.stars}>{reviews[status]}</div>
       </div>
       <span className={styles.percentage}>{percentage}%</span>
       <div className={up ? styles.percentageAltUp : styles.percentageAltDown}>

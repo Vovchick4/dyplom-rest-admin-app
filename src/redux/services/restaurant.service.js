@@ -3,12 +3,13 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 
 import { fetchBaseUrl } from "./helpers"
 import { getErrorMessage } from "../../utils/getErrorMessage"
-import { setRest } from "../features/rest-slice"
+import { setRest, deleteRest } from "../features/rest-slice"
+import { updateHotel } from "../hotel/hotel.operations"
 
 export const restaruantApi = createApi({
     reducerPath: "restaruantApi",
     baseQuery: fetchBaseUrl,
-    tagTypes: ["Restaurant", "UpdateRestId", "Locales"],
+    tagTypes: ["Restaurant", "UpdateRestId", "Locales", "RestaurantId"],
     endpoints: (builder) => ({
         getRestaurants: builder.query({
             query: ({ page, searchText }) => {
@@ -52,6 +53,7 @@ export const restaruantApi = createApi({
                     const { data } = await queryFulfilled
                     dispatch(setRest(data));
                 } catch ({ error }) {
+                    dispatch(deleteRest());
                     toast.error(getErrorMessage(error.data))
                 }
             }
@@ -60,6 +62,20 @@ export const restaruantApi = createApi({
             query: (restId) => ({
                 url: `restaurants/${restId}`,
             }),
+            transformResponse: (res) => res.data,
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        }),
+        getRestaurantStats: builder.query({
+            query: () => ({
+                url: "statistics/restaurant",
+            }),
+            providesTags: ["RestaurantId"],
             transformResponse: (res) => res.data,
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
@@ -91,9 +107,11 @@ export const restaruantApi = createApi({
                 body: { _method: "PATCH", ...params }
             }),
             invalidatesTags: ["Restaurant", "UpdateRestId"],
-            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+            async onQueryStarted(args, { dispatch, getState, queryFulfilled }) {
                 try {
+                    console.log(args);
                     await queryFulfilled
+                    // dispatch(setRest(args))
                 } catch ({ error }) {
                     toast.error(getErrorMessage(error.data))
                 }
@@ -117,9 +135,8 @@ export const restaruantApi = createApi({
 })
 
 // Exports Hooks
-export const { useGetRestaurantsQuery, useGetRestaurantsSearchtextQuery,
-    useGetRestaurantByIdQuery, useGetRestaurantByIdEditQuery, useCreateRestaurantMutation,
-    useEditRestaurantMutation, useRemoveRestaurantMutation } = restaruantApi
+export const { useGetRestaurantsQuery, useGetRestaurantsSearchtextQuery, useGetRestaurantByIdQuery, useGetRestaurantStatsQuery,
+    useGetRestaurantByIdEditQuery, useCreateRestaurantMutation, useEditRestaurantMutation, useRemoveRestaurantMutation } = restaruantApi
 
 // Export reducer
 export const restaurantServiceReducer = restaruantApi.reducer

@@ -40,6 +40,14 @@
   height: 30px;
 }
 
+.inputLoad {
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--main-color);
+}
+
 .cancelIcon {
   position: absolute;
   right: 15px;

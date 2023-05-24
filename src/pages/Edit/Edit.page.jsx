@@ -22,7 +22,7 @@ export default function Edit() {
   function updateSettings(e) {
     restUpdateMutator({
       restId: restaurant.id,
-      params: {
+      data: {
         name: restaurant.name,
         address: restaurant.address,
         settings: {
@@ -105,7 +105,7 @@ export default function Edit() {
     <Layout>
       <PageHeader title={t('Edit hotel section')} />
 
-      {restaurant && (
+      {restaurant && restaurant?.settings && (
         <div className={styles.grid}>
           <Card
             title={t('Dashboard')}

@@ -57,10 +57,14 @@ export default function EditRestaurant({
     validationSchema,
     onSubmit: (values) => {
       const formData = new FormData(formRef.current);
-
+      formData.append("_method", "PATCH");
       if (!image) {
         formData.delete('logo');
       }
+
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
 
       onSubmit(restId, formData);
     },

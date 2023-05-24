@@ -60,9 +60,11 @@ export default function MenuPage() {
 
   useEffect(() => {
     if (!sections) return;
-    setInfiniteData((prev) =>
-      removeDuplicates([...prev, ...sections.data], 'id')
-    );
+    if (infiniteData) {
+      setInfiniteData([]);
+    }
+    setInfiniteData((prev) => [...prev, ...sections.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sections]);
 
   function openAddModal() {
@@ -90,6 +92,7 @@ export default function MenuPage() {
     formData.append('active', Number(active));
     formData.append('_method', 'PATCH');
     updateMenuMutator({ sectionId, data: formData });
+    setInfiniteData(sections.data);
     // setInfiniteData((prev) =>
     //   prev.map((pr) => (pr === sectionId ? { ...pr, active } : { ...pr }))
     // );
@@ -149,7 +152,7 @@ export default function MenuPage() {
           scrollableTarget={'scrollId'}
         >
           <div className={styles.grid_content}>
-            {infiniteData.map((section) => (
+            {removeDuplicates(infiniteData, 'id').map((section) => (
               <MenuCard
                 key={section.id}
                 {...section}

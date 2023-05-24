@@ -122,19 +122,22 @@ export default function Navbar({ onOpenSidebar }) {
                     <Notifications
                       count={
                         data?.data?.filter(({ status }) => status === 'new')
-                          .length
+                          .length || 0
                       }
                     />
                   </button>
                 }
                 position="bottom center"
               >
-                {data?.data?.filter(({ status }) => status === 'new')
+                {/* {data?.data?.filter(({ status }) => status === 'new')
                   ?.length === 0 && (
                   <NotFoundItems title={"Haven't order(s)"} size="small" />
-                )}
-                {data?.data?.filter(({ status }) => status === 'new')
-                  ?.length !== 0 && <NotFoundItems size="medium" />}
+                )} */}
+                {!data?.data ||
+                data?.data?.filter(({ status }) => status === 'new')?.length ===
+                  0 ? (
+                  <NotFoundItems title={"Haven't order(s)"} size="medium" />
+                ) : null}
               </Popup>
               <Settings />
               <User />

@@ -115,15 +115,30 @@ export const restaruantApi = createApi({
             }
         }),
         editRestaurant: builder.mutation({
-            query: ({ restId, params }) => ({
+            query: ({ restId, data }) => ({
                 method: "POST",
                 url: `restaurants/${restId}`,
-                body: { _method: "PATCH", ...params }
+                body: { _method: "PATCH", ...data },
             }),
             invalidatesTags: ["Restaurant", "UpdateRestId"],
             async onQueryStarted(args, { dispatch, getState, queryFulfilled }) {
                 try {
-                    console.log(args);
+                    await queryFulfilled
+                    // dispatch(setRest(args))
+                } catch ({ error }) {
+                    toast.error(getErrorMessage(error.data))
+                }
+            }
+        }),
+        editRestaurantFormData: builder.mutation({
+            query: ({ restId, data }) => ({
+                method: "POST",
+                url: `restaurants/${restId}`,
+                body: data,
+            }),
+            invalidatesTags: ["Restaurant", "UpdateRestId"],
+            async onQueryStarted(args, { dispatch, getState, queryFulfilled }) {
+                try {
                     await queryFulfilled
                     // dispatch(setRest(args))
                 } catch ({ error }) {
@@ -149,7 +164,7 @@ export const restaruantApi = createApi({
 })
 
 // Exports Hooks
-export const { useGetRestaurantsQuery, useGetRestaurantsSearchtextQuery, useGetRestaurantByIdQuery, useGetRestaurantStatsQuery,
+export const { useGetRestaurantsQuery, useGetRestaurantsSearchtextQuery, useGetRestaurantByIdQuery, useGetRestaurantStatsQuery, useEditRestaurantFormDataMutation,
     useGetRestaurantByIdEditQuery, useCreateRestaurantMutation, useEditRestaurantMutation, useRemoveRestaurantMutation, useGetRestaurantReviewsQuery } = restaruantApi
 
 // Export reducer

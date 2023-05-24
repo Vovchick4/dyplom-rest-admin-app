@@ -28,7 +28,7 @@ import { setRest } from '../../redux/features/rest-slice';
 import {
   useGetRestaurantsQuery,
   useCreateRestaurantMutation,
-  useEditRestaurantMutation,
+  useEditRestaurantFormDataMutation,
   useRemoveRestaurantMutation,
 } from '../../redux/services/restaurant.service';
 
@@ -63,15 +63,20 @@ export default function RestaurantList() {
   const [sortBy, setSortBy] = useState(sortingOptions[0].value);
 
   const [currentPage, setCurrentPage] = useState(0);
-  const { data: restaurants, isLoading: restLoading } = useGetRestaurantsQuery({
+  const {
+    data: restaurants,
+    isLoading: restLoading,
+    isFetching: restFetching,
+  } = useGetRestaurantsQuery({
     page: currentPage + 1,
     searchText,
   });
   const [createRestaurantMutator, { isLoading: createLoading }] =
     useCreateRestaurantMutation();
   const [updateRestaurantMutator, { isLoading: updateLoading }] =
-    useEditRestaurantMutation();
-  const [deleteRestaurantMutator] = useRemoveRestaurantMutation();
+    useEditRestaurantFormDataMutation();
+  const [deleteRestaurantMutator, { isLoading: DELoading }] =
+    useRemoveRestaurantMutation();
 
   const { t, i18n } = useTranslation();
   const history = useHistory();
@@ -156,6 +161,11 @@ export default function RestaurantList() {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
+          {restFetching || DELoading ? (
+            <div className={styles.inputLoad}>
+              <Loader />
+            </div>
+          ) : null}
           {!searchText && <AiOutlineSearch className={styles.searchIcon} />}
           {searchText && (
             <GiCancel

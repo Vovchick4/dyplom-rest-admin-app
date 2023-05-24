@@ -118,7 +118,7 @@ export default function App() {
     dispatchRestIdEvent();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rest]);
+  }, [rest, user]);
 
   // Refetch Apis for Locales
   useEffect(() => {

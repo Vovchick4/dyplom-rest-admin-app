@@ -56,6 +56,7 @@ export const authApi = createApi({
                 queryFulfilled
                     // Error with Parse JSON
                     .then(res => {
+                        // dispatch(deleteRest())
                         dispatch(logout())
                         toast.success(res.data.message)
                     })

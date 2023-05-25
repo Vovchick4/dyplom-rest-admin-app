@@ -11,6 +11,7 @@ const urls = {
   waiter: '/waiter',
   edit: '/edit',
   hotelList: '/hotel-list',
+  profile: "/profile",
 };
 
 export default urls;

@@ -17,12 +17,16 @@ import { useGetRestaurantStatsQuery } from '../../../redux/services/restaurant.s
   }
 */
 export default function Statistics() {
-  const { data } = useGetRestaurantStatsQuery();
+  const { data, isLoading } = useGetRestaurantStatsQuery();
 
   const { t } = useTranslation();
 
-  if (data === undefined) {
+  if (isLoading) {
     return <Loader />;
+  }
+
+  if (data === undefined && !isLoading) {
+    return <p>Verify Your Acc</p>;
   }
 
   const excellentCount = data.excellent.count.toString().replace('.', ',');

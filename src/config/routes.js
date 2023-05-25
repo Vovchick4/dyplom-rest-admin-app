@@ -87,6 +87,13 @@ const routes = [
     private: true,
     restricted: false,
   },
+  {
+    path: urls.profile,
+    exact: true,
+    component: lazy(() => import('../pages/Profile')),
+    private: true,
+    restricted: false,
+  },
 ];
 
 export default routes;

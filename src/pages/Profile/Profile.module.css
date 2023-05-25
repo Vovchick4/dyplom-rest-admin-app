@@ -1,0 +1,12 @@
+.content_btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.content_image img {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}

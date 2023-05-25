@@ -84,6 +84,41 @@ export const authApi = createApi({
                     })
             }
         }),
+        confirmEmail: builder.mutation({
+            query: (token) => ({
+                method: 'GET',
+                url: `/auth/register/confirm/${token}`,
+            }),
+            invalidatesTags: ["Auth"],
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                queryFulfilled
+                    // Error with Parse JSON
+                    .then(res => {
+                        toast.success(res.data.message)
+                    })
+                    .catch(({ error }) => {
+                        toast.error(getErrorMessage(error))
+                    })
+            }
+        }),
+        updateUser: builder.mutation({
+            query: (data) => ({
+                method: 'POST',
+                url: `/users/update`,
+                body: data
+            }),
+            invalidatesTags: ["Auth"],
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                queryFulfilled
+                    // Error with Parse JSON
+                    .then(res => {
+                        toast.success(res.data.message)
+                    })
+                    .catch(({ error }) => {
+                        toast.error(getErrorMessage(error))
+                    })
+            }
+        }),
         getUser: builder.query({
             query: () => ({
                 url: '/auth/get-user',
@@ -107,7 +142,8 @@ export const authApi = createApi({
 })
 
 // Exports Hooks
-export const { useGetUserQuery, useLoginMutation, useRegisterMutation, useLogoutMutation, useResetUserPasswordMutation } = authApi
+export const { useGetUserQuery, useLoginMutation, useRegisterMutation, useUpdateUserMutation,
+    useLogoutMutation, useConfirmEmailMutation, useResetUserPasswordMutation } = authApi
 
 // Export reducer
 export const authServiceReducer = authApi.reducer

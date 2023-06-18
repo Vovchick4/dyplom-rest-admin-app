@@ -52,7 +52,7 @@ export default function KitchenPage() {
               </div>
             )}
           </div> */}
-          {data.data.length > 0 ? (
+          {data?.data?.length > 0 ? (
             <div>
               <p className={styles.title}>{t('TAKE AWAY')}</p>
               <div className={styles.card}>

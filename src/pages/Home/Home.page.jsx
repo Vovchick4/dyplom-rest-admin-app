@@ -12,7 +12,7 @@ import styles from './Home.module.css';
 import { getUserSelector } from '../../redux/features/auth-slice';
 import { getRestSelector } from '../../redux/features/rest-slice';
 
-const clientBaseURL = 'http://localhost:3000';
+const clientBaseURL = 'http://localhost:3001';
 
 export default function HomePage() {
   const user = useSelector(getUserSelector);

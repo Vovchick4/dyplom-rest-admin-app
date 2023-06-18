@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import styles from './Waiter.module.css';
 
 import { tableService } from '../../redux/services';
@@ -10,7 +12,13 @@ import BillRequest from './BillRequest';
 //   bill_request: 'bill_request',
 // };
 export default function Waiter() {
-  const { data, isLoading } = tableService.useGetTablesQuery();
+  const { data, refetch, isLoading } = tableService.useGetTablesQuery();
+
+  useEffect(() => {
+    window.onfocus = (e) => {
+      refetch();
+    };
+  }, [refetch]);
 
   return (
     <Layout>

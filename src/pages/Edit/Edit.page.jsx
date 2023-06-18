@@ -75,7 +75,7 @@ export default function Edit() {
   function updateTheme(value) {
     restUpdateMutator({
       restId: restaurant.id,
-      params: {
+      data: {
         name: restaurant.name,
         address: restaurant.address,
         settings: {

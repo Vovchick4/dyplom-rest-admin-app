@@ -5,6 +5,6 @@ import Pusher from 'pusher-js';
 export const echo = new Echo({
   broadcaster: 'pusher',
   key: '8643a3700abe5694afad',
-  cluster: 'eu',
+  cluster: 'en',
   forceTLS: false,
 });
